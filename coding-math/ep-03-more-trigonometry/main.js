@@ -9,20 +9,30 @@ const context = canvas.getContext('2d')
 
 let shouldContinue = true
 
+let angle = 0
+
 const render = ({ timestamp, resized, context, canvas }) => {
-  const { height } = canvas
+  const { height, width } = canvas
   clearCanvas({ context })
 
   if (resized) {
-    context.translate(0, height / 2) // puts y's zero value in the middle
-    context.scale(1, -1) // flips the context
+    // context.translate(0, height / 2) // puts y's zero value in the middle
+    // context.scale(1, -1) // flips the context
   }
 
-  for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
-    const x = angle * 200
-    const y = Math.tan(angle) * 200
-    context.fillRect(x, y, 5, 5)
-  }
+  const centerY = height * 0.5
+  const centerX = width * 0.5
+  const offset = height * 0.4
+
+  const speed = 0.1
+
+  const y = centerY + Math.sin(angle) * offset
+
+  context.beginPath()
+  context.arc(centerX, y, 50, 0, Math.PI * 2, false)
+  context.fill()
+
+  angle += speed
 }
 
 const heartbeat = timestamp => {
