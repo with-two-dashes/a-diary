@@ -83,3 +83,41 @@ const render = ({ timestamp, resized, context, canvas }) => {
   angle += speed
 }
 ```
+
+## Lissajous Curve:
+
+Be sure to play with the speed and radius values to get different shapes.
+
+```js
+let xAngle = 0
+let yAngle = 0
+
+const render = ({ timestamp, resized, context, canvas }) => {
+  // clearCanvas({ context })
+  const { width, height } = canvas
+
+  const centerX = width * 0.5
+  const centerY = height * 0.5
+
+  const xRadius = 500
+  const yRadius = 300
+  const xSpeed = 0.01
+  const ySpeed = 0.05
+
+  const x = centerX + Math.cos(xAngle) * xRadius
+  const y = centerY + Math.sin(yAngle) * yRadius
+
+  // context.beginPath()
+  // context.moveTo(centerX, centerY)
+  // context.lineTo(x, y)
+  // context.stroke()
+
+  context.beginPath()
+  context.arc(x, y, 10, 0, Math.PI * 2, false)
+  context.fill()
+
+  xAngle += xSpeed
+  yAngle += ySpeed
+}
+
+```
