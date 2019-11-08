@@ -1,5 +1,16 @@
 {
   "dependencies": {
     "parcel-bundler": "^1.12.4"
+  },
+  "name": "a-diary",
+  "version": "1.0.0",
+  "description": "A diary, my diary.",
+  "main": "index.js",
+  "repository": "git@github.com:with-two-dashes/a-diary.git",
+  "author": "Victor Lawrence <victorlawrencecode@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "cm01": "cd coding-math/ep-01-introduction && parcel index.html"
   }
 }
