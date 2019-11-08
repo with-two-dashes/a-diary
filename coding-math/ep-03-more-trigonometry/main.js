@@ -9,7 +9,7 @@ const context = canvas.getContext('2d')
 
 let shouldContinue = true
 
-let angle = 0
+// let angle = 0
 
 const oscilationMaker = ({ base, delta }) => {
   // the base is the middle value,
