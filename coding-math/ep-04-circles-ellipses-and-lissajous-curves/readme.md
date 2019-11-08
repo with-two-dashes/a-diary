@@ -86,7 +86,7 @@ const render = ({ timestamp, resized, context, canvas }) => {
 
 ## Lissajous Curve:
 
-Be sure to play with the speed and radius values to get different shapes.
+Be sure to play with the speed and radius values to get different
 
 ```js
 let xAngle = 0
