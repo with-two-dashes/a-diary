@@ -14,6 +14,7 @@
     "cm01": "cd coding-math/ep-01-introduction && parcel index.html",
     "cm02": "cd coding-math/ep-02-into-to-trigonometry && parcel index.html",
     "cm03": "cd coding-math/ep-03-more-trigonometry && parcel index.html",
-    "cm04": "cd coding-math/ep-04-circles-ellipses-and-lissajous-curves && parcel index.html"
+    "cm04": "cd coding-math/ep-04-circles-ellipses-and-lissajous-curves && parcel index.html",
+    "cm05": "cd coding-math/ep-05-arctangent && parcel index.html"
   }
 }
