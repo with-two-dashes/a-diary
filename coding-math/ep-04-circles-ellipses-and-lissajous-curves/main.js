@@ -18,11 +18,12 @@ const render = ({ timestamp, resized, context, canvas }) => {
   const centerX = width * 0.5
   const centerY = height * 0.5
 
-  const radius = 200
+  const xRadius = 400
+  const yRadius = 200
   const speed = 0.1
 
-  const x = centerX + Math.cos(angle) * radius
-  const y = centerY + Math.sin(angle) * radius
+  const x = centerX + Math.cos(angle) * xRadius
+  const y = centerY + Math.sin(angle) * yRadius
 
   context.beginPath()
   context.moveTo(centerX, centerY)
