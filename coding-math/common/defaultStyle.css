@@ -1,0 +1,15 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+  margin:0;
+}
+
+canvas{
+  background: rgba(0,0,0,.1);
+  border: 1rem solid white;
+  display: block;
+  height: 100vh;
+  width: 100vw;
+}
