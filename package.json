@@ -11,6 +11,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "cm01": "cd coding-math/ep-01-introduction && parcel index.html"
+    "cm01": "cd coding-math/ep-01-introduction && parcel index.html",
+    "cm02": "cd coding-math/ep-02-into-to-trigonometry && parcel index.html"
   }
 }
