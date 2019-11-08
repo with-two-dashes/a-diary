@@ -12,9 +12,6 @@ let shouldContinue = true
 let mouseX = 0
 let mouseY = 0
 
-let randomOffsetX = 0
-let randomOffsetY = 0
-
 document.addEventListener('mousemove', (event) => {
   mouseX = event.clientX
   mouseY = event.clientY
@@ -25,8 +22,6 @@ document.addEventListener('mousedown', (event) => {
     makeArrow()
   )
 })
-
-const arrowCount = 10
 
 const makeArrow = () => {
   const arrowXRando = Math.random()
