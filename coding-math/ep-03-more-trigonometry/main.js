@@ -22,16 +22,17 @@ const render = ({ timestamp, resized, context, canvas }) => {
 
   const centerY = height * 0.5
   const centerX = width * 0.5
-  const offset = 50
+  const offset = 0.5
 
-  const baseRadius = 100
+  const baseAlpha = 0.5
 
   const speed = 0.1
 
-  const radius = baseRadius + Math.sin(angle) * offset
+  const alpha = baseAlpha + Math.sin(angle) * offset
 
   context.beginPath()
-  context.arc(centerX, centerY, radius, 0, Math.PI * 2, false)
+  context.fillStyle = `rgba(0,0,0,${alpha})`
+  context.arc(centerX, centerY, 50, 0, Math.PI * 2, false)
   context.fill()
 
   angle += speed
