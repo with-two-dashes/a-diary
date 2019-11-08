@@ -9,9 +9,71 @@ const context = canvas.getContext('2d')
 
 let shouldContinue = true
 
+let mouseX = 0
+let mouseY = 0
+
+let randomOffsetX = 0
+let randomOffsetY = 0
+
+document.addEventListener('mousemove', (event) => {
+  mouseX = event.clientX
+  mouseY = event.clientY
+})
+
+document.addEventListener('mousedown', (event) => {
+  arrows.push(
+    makeArrow()
+  )
+})
+
+const arrowCount = 10
+
+const makeArrow = () => {
+  const arrowXRando = Math.random()
+  const arrowYRando = Math.random()
+
+  return ({ context }) => {
+    const { canvas } = context
+    const { height, width } = canvas
+    const arrowX = width * arrowXRando
+    const arrowY = height * arrowYRando
+    const distanceX = mouseX - arrowX
+    const distanceY = mouseY - arrowY
+    const angle = Math.atan2(distanceY, distanceX) // special sauce for this episode.
+    context.save()
+
+    context.translate(arrowX, arrowY)
+    context.rotate(angle)
+
+    context.beginPath()
+    context.moveTo(20, 0)
+    context.lineTo(-20, 0)
+    context.moveTo(20, 0)
+    context.lineTo(10, -10)
+    context.moveTo(20, 0)
+    context.lineTo(10, 10)
+    context.stroke()
+
+    context.restore()
+  }
+}
+
+const arrows = [
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow(),
+  makeArrow()
+]
+
 const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
-  const { width, height } = canvas
+  arrows.map(caller => { caller({ context }) })
 }
 
 const heartbeat = timestamp => {
