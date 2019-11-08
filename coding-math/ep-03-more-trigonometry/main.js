@@ -11,6 +11,18 @@ let shouldContinue = true
 
 let angle = 0
 
+const oscilationMaker = ({ base, delta }) => {
+  // the base is the middle value,
+  // the delta is the ammount of change, positive and negative
+  let angleValue = 0
+  return ({ speed }) => {
+    angleValue += speed
+    return base + Math.sin(angleValue) * delta
+  }
+}
+
+const oscilateAlpha = oscilationMaker({ base: 0.5, delta: 0.125 })
+
 const render = ({ timestamp, resized, context, canvas }) => {
   const { height, width } = canvas
   clearCanvas({ context })
@@ -22,20 +34,19 @@ const render = ({ timestamp, resized, context, canvas }) => {
 
   const centerY = height * 0.5
   const centerX = width * 0.5
-  const offset = 0.5
+  // const changeAmmount = 0.5
+  // const middleValue = 0.5
 
-  const baseAlpha = 0.5
+  const speed = 0.2
 
-  const speed = 0.1
-
-  const alpha = baseAlpha + Math.sin(angle) * offset
+  // const alpha = middleValue + (Math.sin(angle) * changeAmmount)
 
   context.beginPath()
-  context.fillStyle = `rgba(0,0,0,${alpha})`
+  context.fillStyle = `rgba(0,0,0,${oscilateAlpha({ speed })})`
   context.arc(centerX, centerY, 50, 0, Math.PI * 2, false)
   context.fill()
 
-  angle += speed
+  // angle += speed
 }
 
 const heartbeat = timestamp => {
