@@ -9,8 +9,31 @@ const context = canvas.getContext('2d')
 
 let shouldContinue = true
 
+let angle = 0
+
 const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
+  const { width, height } = canvas
+
+  const centerX = width * 0.5
+  const centerY = height * 0.5
+
+  const radius = 200
+  const speed = 0.1
+
+  const x = centerX + Math.cos(angle) * radius
+  const y = centerY + Math.sin(angle) * radius
+
+  context.beginPath()
+  context.moveTo(centerX, centerY)
+  context.lineTo(x, y)
+  context.stroke()
+
+  context.beginPath()
+  context.arc(x, y, 10, 0, Math.PI * 2, false)
+  context.fill()
+
+  angle += speed
 }
 
 const heartbeat = timestamp => {
