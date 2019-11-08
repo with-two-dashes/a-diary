@@ -20,7 +20,7 @@ const render = ({ timestamp, resized, context, canvas }) => {
 
   for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
     const x = angle * 200
-    const y = Math.cos(angle) * 200
+    const y = Math.tan(angle) * 200
     context.fillRect(x, y, 5, 5)
   }
 }
