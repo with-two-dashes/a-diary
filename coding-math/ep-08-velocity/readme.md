@@ -1,6 +1,7 @@
 Episode: https://www.youtube.com/watch?v=IpN4NLDpWDY
 
 # Velocity
+## A change in position over time.
 
 "It is easy to associate Velocity with Speed, but speed is only one aspect of velocity."
 
