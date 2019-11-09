@@ -3,6 +3,7 @@ import { canvasSizer } from '../common/canvasSizer.js'
 import { clearCanvas } from '../common/clearCanvas.js'
 import { makeParticle } from '../common/makeParticle.js'
 import { makeVector } from '../common/makeVector.js'
+import { makeRepeater } from '../common/makeRepeater.js'
 
 const canvas = document.createElement('canvas')
 document.body.appendChild(canvas)
@@ -23,18 +24,34 @@ const accel = makeVector({
   y: 0.1
 })
 
-const particles = [
-  p1
-]
+const particles = []
+
+const particleCount = 100
+
+const buildParticles = makeRepeater(() => {
+  const x = 500
+  const y = 300
+  const speed = 10 * Math.random() + 2
+  const direction = - Math.PI * 2 * Math.random()
+  const gravity = 0.1
+  particles.push(makeParticle({
+    x,
+    y,
+    speed,
+    direction,
+    gravity
+  }))
+})
+
+buildParticles(particleCount)
 
 const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
   const { width, height } = canvas
   particles.forEach(particle => {
-    particle.accelerate(accel)
     particle.update()
     context.beginPath()
-    context.arc(particle.position.x, particle.position.y, 10, 0, Math.PI * 2, false)
+    context.arc(particle.position.x, particle.position.y, 4, 0, Math.PI * 2, false)
     context.fill()
   })
 }

@@ -4,16 +4,19 @@ export const makeParticle = ({
   x,
   y,
   speed = 0,
-  direction = 0
+  direction = 0,
+  gravity = 0
 }) => {
 
   const internalPosition = makeVector({ x, y })
   const internalVelocity = makeVector({ x: 0, y: 0 })
+  const internalGravity = makeVector({ x: 0, y: gravity })
 
   internalVelocity.length = speed
   internalVelocity.angle = direction
 
   const update = () => {
+    internalVelocity.addTo(internalGravity)
     internalPosition.addTo(internalVelocity)
   }
 
