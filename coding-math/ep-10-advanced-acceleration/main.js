@@ -28,6 +28,16 @@ const drawShip = ({ canvas, context, angle }) => {
   context.beginPath()
   context.arc(ship.position.x, ship.position.y, 10, 0, Math.PI * 2, false)
   context.fill()
+  if (ship.position.x > width) {
+    ship.position.x = 0
+  } else if (ship.position.x < 0) {
+    ship.position.x = width
+  }
+  if (ship.position.y > height) {
+    ship.position.y = 0
+  } else if (ship.position.y < 0) {
+    ship.position.y = height
+  }
 }
 
 const keycodes = {
@@ -80,7 +90,7 @@ document.body.addEventListener('keyup', event => {
 let angle = 0
 
 const render = ({ timestamp, resized, context, canvas }) => {
-  // clearCanvas({ context })
+  clearCanvas({ context })
   const { width, height } = canvas
 
   ship.accelerate(thrust)
