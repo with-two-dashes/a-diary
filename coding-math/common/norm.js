@@ -1,0 +1,1 @@
+export const norm = ({ min, max, value }) => (value - min) - (max - min)
