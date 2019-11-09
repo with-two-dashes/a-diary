@@ -17,6 +17,7 @@
     "cm04": "cd coding-math/ep-04-circles-ellipses-and-lissajous-curves && parcel index.html",
     "cm05": "cd coding-math/ep-05-arctangent && parcel index.html",
     "cm06": "cd coding-math/ep-06-vectors-part-1 && parcel index.html",
-    "cm07": "cd coding-math/ep-07-vectors-part-2 && parcel index.html"
+    "cm07": "cd coding-math/ep-07-vectors-part-2 && parcel index.html",
+    "cm08": "cd coding-math/ep-08-velocity && parcel index.html"
   }
 }
