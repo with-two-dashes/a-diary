@@ -23,11 +23,34 @@ const ship = makeParticle({
 
 const thrust = makeVector({ x: 0, y: 0 })
 
-const drawShip = ({ canvas, context, angle }) => {
+let isThrusting = false
+let isTurningLeft = false
+let isTurningRight = false
+
+const drawShip = ({ canvas, context, angle, isThrusting }) => {
   const { width, height } = canvas
+
+  context.save()
+  context.translate(ship.position.x, ship.position.y)
+  context.rotate(angle)
+
   context.beginPath()
-  context.arc(ship.position.x, ship.position.y, 10, 0, Math.PI * 2, false)
+  context.moveTo(10, 0)
+  context.lineTo(-10, -7)
+  context.lineTo(-10, 7)
+  context.lineTo(10, 0)
+  context.stroke()
   context.fill()
+
+  if (isThrusting) {
+    context.beginPath()
+    context.moveTo(-10, 0)
+    context.lineTo(-18, 0)
+    context.stroke()
+  }
+
+  context.restore()
+
   if (ship.position.x > width) {
     ship.position.x = 0
   } else if (ship.position.x < 0) {
@@ -51,16 +74,13 @@ document.body.addEventListener('keydown', event => {
   const { LEFT, RIGHT, UP, DOWN } = keycodes
   switch (event.keyCode) {
     case UP:
-      thrust.y = -0.1
+      isThrusting = true
       break;
-    case DOWN:
-      thrust.y = 0.1
-      break
     case LEFT:
-      thrust.x = -0.1
+      isTurningLeft = true
       break
     case RIGHT:
-      thrust.x = 0.1
+      isTurningRight = true
       break
     default:
       break
@@ -71,16 +91,13 @@ document.body.addEventListener('keyup', event => {
   const { LEFT, RIGHT, UP, DOWN } = keycodes
   switch (event.keyCode) {
     case UP:
-      thrust.y = 0
+      isThrusting = false
       break;
-    case DOWN:
-      thrust.y = 0
-      break
     case LEFT:
-      thrust.x = 0
+      isTurningLeft = false
       break
     case RIGHT:
-      thrust.x = 0
+      isTurningRight = false
       break
     default:
       break
@@ -93,10 +110,24 @@ const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
   const { width, height } = canvas
 
+  if (isTurningLeft) {
+    angle -= 0.05
+  } else if (isTurningRight) {
+    angle += 0.05
+  }
+
+  thrust.angle = angle
+
+  if (isThrusting) {
+    thrust.length = 0.1
+  } else {
+    thrust.length = 0
+  }
+
   ship.accelerate(thrust)
   ship.update()
   // animate stuff here
-  drawShip({ context, canvas })
+  drawShip({ context, canvas, angle, isThrusting })
 }
 
 const heartbeat = timestamp => {
