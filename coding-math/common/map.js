@@ -1,5 +1,8 @@
 import { norm } from './norm.js'
 import { lerp } from './lerp.js'
+
+// leverages both tools above to map one set of values onto another.
+
 export const map = ({
   value,
   sourceMin,
