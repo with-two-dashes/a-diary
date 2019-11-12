@@ -104,3 +104,11 @@ const render = ({ timestamp, resized, context, canvas }) => {
 ## Regeneration
 
 Good for Particles
+
+The initial priming time it takes to make a good particle fountain is because 
+all of our first particles were created at once. The way to make it look better
+is to stagger their creation initially untill we have the count we are looking for.
+
+Or we could just delay their creation using something like a setTimeout.
+
+Have a look at Main to see my thoughts
