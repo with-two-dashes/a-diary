@@ -100,3 +100,7 @@ const render = ({ timestamp, resized, context, canvas }) => {
   })
 }
 ```
+
+## Regeneration
+
+Good for Particles
