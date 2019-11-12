@@ -7,6 +7,7 @@ export const makeParticle = ({
   direction = 0,
   gravity = 0,
   mass = 1,
+  radius = 1,
 }) => {
 
   const internalPosition = makeVector({ x, y })
@@ -14,6 +15,7 @@ export const makeParticle = ({
   const internalGravity = makeVector({ x: 0, y: gravity })
 
   let internalMass = mass
+  let internalRadius = radius
 
   internalVelocity.length = speed
   internalVelocity.angle = direction
@@ -53,6 +55,12 @@ export const makeParticle = ({
     angleTo,
     distanceTo,
     gravatateTo,
+    get radius() {
+      return internalRadius
+    },
+    set radius(newRadius) {
+      internalRadius = newRadius
+    },
     get position() {
       return internalPosition
     },
