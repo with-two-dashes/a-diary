@@ -14,13 +14,18 @@ let shouldContinue = true
 
 const { width, height } = canvas
 
-const p = makeParticle({
-  x: width / 2,
-  y: height / 2,
-  speed: 4,
-  direction: Math.random() * Math.PI * 2,
-  radius: 50
-})
+const particleCount = 100
+let particlesArray = []
+
+for (let i = 0; i < particleCount; i++) {
+  particlesArray.push(makeParticle({
+    x: width / 2,
+    y: height / 2,
+    speed: 10 * Math.random() + 4,
+    direction: Math.random() * Math.PI * 2,
+    radius: Math.random() * 20,
+  }))
+}
 
 // initialize Stuff here.
 
@@ -28,24 +33,28 @@ const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
   const { width, height } = canvas
 
-  p.update()
+  particlesArray = particlesArray.filter(p => {
 
-  context.beginPath()
-  context.arc(p.position.x, p.position.y, p.radius, 0, Math.PI * 2, false)
-  context.fill()
+    p.update()
 
-  if (p.position.x - p.radius > width) {
-    p.position.x = -p.radius
-  } else if (p.position.x < -p.radius) {
-    p.position.x = width + p.radius
-  }
+    context.beginPath()
+    context.arc(p.position.x, p.position.y, p.radius, 0, Math.PI * 2, false)
+    context.fill()
 
-  if (p.position.y - p.radius > height) {
-    p.position.y = -p.radius
-  } else if (p.position.y < -p.radius) {
-    p.position.y = height + p.radius
-  }
+    if (p.position.x - p.radius > width) {
+      return false
+    } else if (p.position.x < -p.radius) {
+      return false
+    }
 
+    if (p.position.y - p.radius > height) {
+      return false
+    } else if (p.position.y < -p.radius) {
+      return false
+    }
+
+    return true
+  })
 }
 
 const heartbeat = timestamp => {
