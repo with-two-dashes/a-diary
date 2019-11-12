@@ -34,18 +34,16 @@ const render = ({ timestamp, resized, context, canvas }) => {
   context.arc(p.position.x, p.position.y, p.radius, 0, Math.PI * 2, false)
   context.fill()
 
-  // old method works, but it is less pretty:
-
-  if (p.position.x > width) {
-    p.position.x = 0
-  } else if (p.position.x < 0) {
-    p.position.x = width
+  if (p.position.x - p.radius > width) {
+    p.position.x = -p.radius
+  } else if (p.position.x < -p.radius) {
+    p.position.x = width + p.radius
   }
 
-  if (p.position.y > height) {
-    p.position.y = 0
-  } else if (p.position.y < 0) {
-    p.position.y = height
+  if (p.position.y - p.radius > height) {
+    p.position.y = -p.radius
+  } else if (p.position.y < -p.radius) {
+    p.position.y = height + p.radius
   }
 
 }
