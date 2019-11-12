@@ -18,14 +18,16 @@ const particleCount = 300
 const particlesArray = []
 
 for (let i = 0; i < particleCount; i++) {
-  particlesArray.push(makeParticle({
-    x: width / 2,
-    y: height,
-    speed: Math.random() * 8 + 5,
-    direction: - Math.PI / 2 + (Math.random() * .2 - .1),
-    radius: Math.random() * 10 + 2,
-    gravity: 0.1
-  }))
+  setTimeout(() => {
+    particlesArray.push(makeParticle({
+      x: width / 2,
+      y: height,
+      speed: Math.random() * 8 + 5,
+      direction: - Math.PI / 2 + (Math.random() * .2 - .1),
+      radius: Math.random() * 10 + 2,
+      gravity: 0.1
+    }))
+  }, 3000 * Math.random())
 }
 
 // initialize Stuff here.
