@@ -14,44 +14,42 @@ let shouldContinue = true
 
 const { width, height } = canvas
 
-const particleCount = 300
-const particlesArray = []
-
-for (let i = 0; i < particleCount; i++) {
-  setTimeout(() => {
-    particlesArray.push(makeParticle({
-      x: width / 2,
-      y: height,
-      speed: Math.random() * 8 + 5,
-      direction: - Math.PI / 2 + (Math.random() * .2 - .1),
-      radius: Math.random() * 10 + 2,
-      gravity: 0.1
-    }))
-  }, 3000 * Math.random())
-}
+const particle = makeParticle({
+  x: width / 2,
+  y: height / 2,
+  direction: -Math.PI / 2 * Math.random(),
+  speed: 10,
+  gravity: 0.4,
+  radius: 10,
+  bounce: -.94
+})
 
 // initialize Stuff here.
 
 const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
   const { width, height } = canvas
+  particle.update()
 
-  particlesArray.forEach(particle => {
+  context.beginPath()
+  context.arc(particle.position.x, particle.position.y, particle.radius, 0, Math.PI * 2, false)
+  context.fill()
 
-    particle.update()
+  if (particle.position.x + particle.radius > width) {
+    particle.position.x = width - particle.radius
+    particle.velocity.x *= particle.bounce
+  } else if (particle.position.x - particle.radius < 0) {
+    particle.position.x = particle.radius
+    particle.velocity.x *= particle.bounce
+  }
 
-    context.beginPath()
-    context.arc(particle.position.x, particle.position.y, particle.radius, 0, Math.PI * 2, false)
-    context.fill()
-
-    if (particle.position.y - particle.radius > height) {
-      particle.position.x = width / 2
-      particle.position.y = height
-      particle.velocity.length = Math.random() * 8 + 5
-      particle.velocity.angle = - Math.PI / 2 + (Math.random() * .2 - .1)
-    }
-
-  })
+  if (particle.position.y + particle.radius > height) {
+    particle.position.y = height - particle.radius
+    particle.velocity.y *= particle.bounce
+  } else if (particle.position.y - particle.radius < 0) {
+    particle.position.y = particle.radius
+    particle.velocity.y *= particle.bounce
+  }
 }
 
 const heartbeat = timestamp => {

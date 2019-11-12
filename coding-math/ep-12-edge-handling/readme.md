@@ -112,3 +112,23 @@ is to stagger their creation initially untill we have the count we are looking f
 Or we could just delay their creation using something like a setTimeout.
 
 Have a look at Main to see my thoughts
+
+## Bounce
+
+```js
+  if (particle.position.x + particle.radius > width) {
+    particle.position.x = width - particle.radius
+    particle.velocity.x *= -1 // reverses the velocity
+  } else if (particle.position.x - particle.radius < 0) {
+    particle.position.x = particle.radius
+    particle.velocity.x *= -1
+  }
+
+  if (particle.position.y + particle.radius > height) {
+    particle.position.y = height - particle.radius
+    particle.velocity.y *= -1
+  } else if (particle.position.y - particle.radius < 0) {
+    particle.position.y = particle.radius
+    particle.velocity.y *= -1
+  }
+```
