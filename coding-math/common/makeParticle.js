@@ -5,12 +5,15 @@ export const makeParticle = ({
   y,
   speed = 0,
   direction = 0,
-  gravity = 0
+  gravity = 0,
+  mass = 1,
 }) => {
 
   const internalPosition = makeVector({ x, y })
   const internalVelocity = makeVector({ x: 0, y: 0 })
   const internalGravity = makeVector({ x: 0, y: gravity })
+
+  let internalMass = mass
 
   internalVelocity.length = speed
   internalVelocity.angle = direction
@@ -24,9 +27,32 @@ export const makeParticle = ({
     internalVelocity.addTo(vector)
   }
 
+  const angleTo = otherParticle => {
+    const y = otherParticle.position.y - internalPosition.y
+    const x = otherParticle.position.x - internalPosition.x
+    return Math.atan2(y, x)
+  }
+
+  const distanceTo = otherParticle => {
+    const distanceX = otherParticle.position.x - internalPosition.x
+    const distanceY = otherParticle.position.y - internalPosition.y
+    return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY))
+  }
+
+  const gravatateTo = otherParticle => {
+    const gravityVector = makeVector({ x: 0, y: 0 })
+    const distance = distanceTo(otherParticle)
+    gravityVector.length = otherParticle.mass / (distance * distance)
+    gravityVector.angle = angleTo(otherParticle)
+    internalVelocity.addTo(gravityVector)
+  }
+
   return {
     update,
     accelerate,
+    angleTo,
+    distanceTo,
+    gravatateTo,
     get position() {
       return internalPosition
     },
@@ -44,6 +70,12 @@ export const makeParticle = ({
     },
     set direction(direction) {
       internalVelocity.angle = direction
+    },
+    get mass() {
+      return internalMass
+    },
+    set mass(newMass) {
+      internalMass = newMass
     }
   }
 

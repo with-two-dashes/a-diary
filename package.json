@@ -20,6 +20,7 @@
     "cm07": "cd coding-math/ep-07-vectors-part-2 && parcel index.html",
     "cm08": "cd coding-math/ep-08-velocity && parcel index.html",
     "cm09": "cd coding-math/ep-09-acceleration && parcel index.html",
-    "cm10": "cd coding-math/ep-10-advanced-acceleration && parcel index.html"
+    "cm10": "cd coding-math/ep-10-advanced-acceleration && parcel index.html",
+    "cm11": "cd coding-math/ep-11-gravity && parcel index.html"
   }
 }
