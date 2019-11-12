@@ -7,7 +7,7 @@ export const makeParticle = ({
   direction = 0,
   gravity = 0,
   mass = 1,
-  radius = 1,
+  radius = 0,
 }) => {
 
   const internalPosition = makeVector({ x, y })
