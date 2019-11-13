@@ -26,11 +26,7 @@ export const makeParticle = ({
   internalVelocity.angle = direction
 
   const update = () => {
-    if (internalVelocity.length * friction > StopThreshhold) {
-      internalVelocity.multiplyBy(friction)
-    } else {
-      internalVelocity.length = 0
-    }
+    internalVelocity.multiplyBy(friction)
     internalVelocity.addTo(internalGravity)
     internalPosition.addTo(internalVelocity)
   }
