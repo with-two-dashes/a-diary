@@ -22,6 +22,7 @@
     "cm09": "cd coding-math/ep-09-acceleration && parcel index.html",
     "cm10": "cd coding-math/ep-10-advanced-acceleration && parcel index.html",
     "cm11": "cd coding-math/ep-11-gravity && parcel index.html",
-    "cm12": "cd coding-math/ep-12-edge-handling && parcel index.html"
+    "cm12": "cd coding-math/ep-12-edge-handling && parcel index.html",
+    "cm13": "cd coding-math/ep-13-friction && parcel index.html"
   }
 }
