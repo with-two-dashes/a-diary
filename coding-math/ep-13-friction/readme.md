@@ -118,3 +118,9 @@ const render = ({ timestamp, resized, context, canvas }) => {
   context.fill()
 }
 ```
+---
+The video makes the case that the above is far too complex and CPU hungry as it uses all of these Math functions in the Particle class.
+
+---
+
+Well, have a look at the code in `main.js` and the updated `makeParticle.js` files.

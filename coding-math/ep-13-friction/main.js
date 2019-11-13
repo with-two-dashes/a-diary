@@ -21,24 +21,14 @@ const particle = makeParticle({
   y: height / 2,
   direction: Math.PI * Math.random() * 2,
   speed: 10,
-  radius: 10
-})
-
-const friction = makeVector({
-  x: 0.15,
-  y: 0
+  radius: 10,
+  friction: 0.97
 })
 
 const render = ({ timestamp, resized, context, canvas }) => {
   clearCanvas({ context })
   const { width, height } = canvas
 
-  friction.angle = particle.velocity.angle
-  if (particle.velocity.length > friction.length) {
-    particle.velocity.subtractFrom(friction)
-  } else {
-    particle.velocity.length = 0
-  }
   particle.update()
 
   context.beginPath()

@@ -1,5 +1,7 @@
 import { makeVector } from './makeVector.js'
 
+const StopThreshhold = 0.3
+
 export const makeParticle = ({
   x,
   y,
@@ -9,6 +11,7 @@ export const makeParticle = ({
   mass = 1,
   radius = 0,
   bounce = -1,
+  friction = 1
 }) => {
 
   const internalPosition = makeVector({ x, y })
@@ -23,6 +26,11 @@ export const makeParticle = ({
   internalVelocity.angle = direction
 
   const update = () => {
+    if (internalVelocity.length * friction > StopThreshhold) {
+      internalVelocity.multiplyBy(friction)
+    } else {
+      internalVelocity.length = 0
+    }
     internalVelocity.addTo(internalGravity)
     internalPosition.addTo(internalVelocity)
   }
