@@ -5,6 +5,6 @@ export const circleCollision = ({ circleA, circleB }) => {
     pointB: circleB
   })
   const combinedRadiai = circleA.radius + circleB.radius
-  const isColliding = combinedRadiai <= distance
+  const isColliding = combinedRadiai >= distance
   return isColliding
 }
