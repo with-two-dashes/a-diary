@@ -15,18 +15,56 @@ export const makeParticle = ({
   let internalY = y
   let internalVX = vx
   let internalVY = vy
-  let internalDirection = direction
-  let internalSpeed = speed
   let internalMass = mass
   let internalRadius = radius
   let internalBounce = bounce
   let internalGravity = gravity
   let internalFriction = friction
+  let internalSprings = []
+  let internalGravitations = []
 
-  internalVX = Math.cos(internalDirection) * internalSpeed
-  internalVY = Math.sin(internalDirection) * internalSpeed
+  setSpeed(speed)
+  setHeading(direction)
+
+  const handleSprings = () => {
+    for (const spring of internalSprings) {
+      springTo({
+        particle: spring.point,
+        stiffness: spring.stiffness,
+        length: spring.length
+      })
+    }
+  }
+
+  const handleGravitations = () => {
+    for (const particle of internalGravitations) {
+      gravatateTo(particle)
+    }
+  }
+
+  function getSpeed () {
+    return Math.sqrt(internalVX * internalVX + internalVY * internalVY)
+  }
+
+  function getHeading () {
+    return Math.atan2(internalVY, internalVX)
+  }
+
+  function setHeading (angle) {
+    const speed = getSpeed()
+    internalVX = Math.cos(angle) * speed
+    internalVY = Math.sin(angle) * speed
+  }
+
+  function setSpeed (newSpeed) {
+    const headingAngle = getHeading()
+    internalVX = Math.cos(headingAngle) * newSpeed
+    internalVY = Math.sin(headingAngle) * newSpeed
+  }
 
   const update = () => {
+    handleSprings()
+    handleGravitations()
     internalVX *= internalFriction
     internalVY *= internalFriction
     internalVY += internalGravity
@@ -65,12 +103,67 @@ export const makeParticle = ({
     internalVY += accelerationY
   }
 
+  const springTo = ({ particle, stiffness, length = 0 }) => {
+    const distanceX = particle.x - internalX
+    const distanceY = particle.y - internalY
+    const distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY))
+    const springForce = (distance - length) * stiffness
+    internalVX += (distanceX / distance) * springForce
+    internalVY += (distanceY / distance) * springForce
+  }
+
+  const addSpring = ({ point, stiffness, length = 0 }) => {
+    const newSprings = removeSpring({ point })
+    newSprings.push({
+      point,
+      stiffness,
+      length
+    })
+    internalSprings = newSprings
+    return internalSprings
+  }
+
+  const removeSpring = ({ point }) => {
+    internalSprings = internalSprings.filter(({ point: existingPoint }) => {
+      if (point === existingPoint) {
+        return false
+      } else {
+        return true
+      }
+    })
+    return internalSprings
+  }
+
+  const addGravitation = ({ particle }) => {
+    removeGravitation({ particle })
+    internalGravitations = [
+      ...internalGravitations,
+      particle
+    ]
+    internalGravitations.push(particle)
+  }
+
+  const removeGravitation = ({ particle }) => {
+    internalGravitations = internalGravitations.filter((existingParticle) => {
+      if (existingParticle === particle) {
+        return false
+      } else {
+        return true
+      }
+    })
+  }
+
   return {
     update,
     accelerate,
     angleTo,
     distanceTo,
     gravatateTo,
+    springTo,
+    addSpring,
+    removeSpring,
+    addGravitation,
+    removeGravitation,
     get x () {
       return internalX
     },
@@ -102,16 +195,16 @@ export const makeParticle = ({
       internalRadius = newRadius
     },
     get speed () {
-      return internalSpeed
+      return getSpeed()
     },
     set speed (newSpeed) {
-      internalSpeed = newSpeed
+      setSpeed(newSpeed)
     },
     get direction () {
-      return internalDirection
+      return getHeading()
     },
     set direction (direction) {
-      internalDirection = direction
+      setHeading(direction)
     },
     get mass () {
       return internalMass
