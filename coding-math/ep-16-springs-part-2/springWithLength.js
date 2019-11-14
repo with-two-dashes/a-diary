@@ -1,10 +1,3 @@
-Episode: youtubeurl
-
-# Springs Part 2
-
-A spring with a length!
-
-```js
 import {
   registerRenderCycle,
   getCanvas,
@@ -63,5 +56,3 @@ registerRenderCycle(({ context, mousePosition }) => {
 })
 
 startRender()
-
-```
