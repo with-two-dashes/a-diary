@@ -3,11 +3,13 @@ import { canvasSizer } from '../common/canvasSizer.js'
 import { clearCanvas as internalClearCanvas } from '../common/clearCanvas.js'
 import { makeVector } from '../common/makeVector.js'
 
-const mousePosition = makeVector({ x: 0, y: 0 })
-
 const canvas = document.createElement('canvas')
 document.body.appendChild(canvas)
 canvasSizer({ canvas })
+
+const { width, height } = canvas
+
+const mousePosition = makeVector({ x: width / 2, y: height / 2 })
 
 const context = canvas.getContext('2d')
 

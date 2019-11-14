@@ -45,7 +45,7 @@ const render = ({ timestamp, resized, context, canvas }) => {
   drawCircle({
     context,
     position: springPoint,
-    radius: 4,
+    radius: 4
   })
 
   context.beginPath()
@@ -56,9 +56,8 @@ const render = ({ timestamp, resized, context, canvas }) => {
   drawCircle({
     context,
     position: weight.position,
-    radius: weight.radius,
+    radius: weight.radius
   })
-
 }
 
 const heartbeat = timestamp => {
