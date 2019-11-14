@@ -20,7 +20,7 @@ const sun1 = makeParticle({
 })
 
 const sun2 = makeParticle({
-  x: 500,
+  x: 600,
   y: 400,
   radius: 20,
   mass: 20000
@@ -33,7 +33,7 @@ const emitter = {
 
 const particles = []
 
-const particleCount = 400
+const particleCount = 100
 
 for (let i = 0; i < particleCount; i++) {
   const p = makeParticle({
@@ -48,8 +48,10 @@ for (let i = 0; i < particleCount; i++) {
   particles.push(p)
 }
 
-registerRenderCycle(({ context, mousePosition }) => {
+registerRenderCycle(({ context, mousePosition, canvas }) => {
   clearCanvas()
+
+  const { width, height } = canvas
 
   particles.forEach(particle => {
     particle.update()
