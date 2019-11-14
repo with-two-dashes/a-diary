@@ -4,7 +4,7 @@ import {
   // getContext,
   clearCanvas,
   startRender
-} from './main.js.js'
+} from './main.js'
 
 import { drawCircle } from '../common/drawCircle.js'
 // import { makeParticle } from '../common/makeParticle.js'
