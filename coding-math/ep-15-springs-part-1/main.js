@@ -31,7 +31,7 @@ const weight = makeParticle({
 const springConstantK = 0.1
 
 const render = ({ timestamp, resized, context, canvas }) => {
-  clearCanvas({ context })
+  // clearCanvas({ context })
   const { width, height } = canvas
 
   const distance = springPoint.subtract(weight.position)
@@ -43,20 +43,21 @@ const render = ({ timestamp, resized, context, canvas }) => {
 
   drawCircle({
     context,
-    position: weight.position,
-    radius: weight.radius
-  })
-
-  drawCircle({
-    context,
     position: springPoint,
-    radius: 4
+    radius: 4,
   })
 
   context.beginPath()
   context.moveTo(springPoint.x, springPoint.y)
   context.lineTo(weight.position.x, weight.position.y)
   context.stroke()
+
+  drawCircle({
+    context,
+    position: weight.position,
+    radius: weight.radius,
+    fillStyle: `hsl(${weight.velocity.angle}rad, 50%, 50%)`
+  })
 
 }
 
@@ -68,3 +69,8 @@ const heartbeat = timestamp => {
   }
 }
 requestAnimationFrame(heartbeat)
+
+document.body.addEventListener('mousemove', (event) => {
+  springPoint.x = event.clientX
+  springPoint.y = event.clientY
+})
