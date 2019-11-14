@@ -26,6 +26,7 @@
     "cm13": "cd coding-math/ep-13-friction && parcel index.html",
     "cm14": "cd coding-math/ep-14-collision-detection && parcel index.html",
     "cm15": "cd coding-math/ep-15-springs-part-1 && parcel index.html",
-    "cm16": "cd coding-math/ep-16-springs-part-2 && parcel index.html"
+    "cm16": "cd coding-math/ep-16-springs-part-2 && parcel index.html",
+    "cm17": "cd coding-math/ep-17-particle-optimization && parcel index.html"
   }
 }
