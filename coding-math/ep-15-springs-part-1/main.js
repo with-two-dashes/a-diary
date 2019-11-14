@@ -23,7 +23,9 @@ const weight = makeParticle({
   x: width * Math.random(),
   y: height * Math.random(),
   radius: 20,
-  friction: 0.95
+  friction: 0.95,
+  speed: 50,
+  direction: Math.PI * 2 * Math.random()
 })
 
 const springConstantK = 0.1
