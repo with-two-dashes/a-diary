@@ -4,6 +4,8 @@ export const drawCircle = ({
   radius,
   fillStyle,
   strokeStyle,
+  fill = true,
+  stroke = true,
 }) => {
   context.beginPath()
   if (fillStyle) {
@@ -13,6 +15,10 @@ export const drawCircle = ({
     context.strokeStyle = strokeStyle
   }
   context.arc(position.x, position.y, radius, 0, Math.PI * 2, false)
-  context.fill()
-  context.stroke()
+  if (fill) {
+    context.fill()
+  }
+  if (stroke) {
+    context.stroke()
+  }
 }

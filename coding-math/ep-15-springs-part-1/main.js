@@ -23,15 +23,16 @@ const weight = makeParticle({
   x: width * Math.random(),
   y: height * Math.random(),
   radius: 20,
-  friction: 0.95,
+  friction: 0.25,
   speed: 50,
-  direction: Math.PI * 2 * Math.random()
+  direction: Math.PI * 2 * Math.random(),
+  gravity: 0
 })
 
-const springConstantK = 0.1
+const springConstantK = 0.3
 
 const render = ({ timestamp, resized, context, canvas }) => {
-  // clearCanvas({ context })
+  clearCanvas({ context })
   const { width, height } = canvas
 
   const distance = springPoint.subtract(weight.position)
@@ -56,7 +57,6 @@ const render = ({ timestamp, resized, context, canvas }) => {
     context,
     position: weight.position,
     radius: weight.radius,
-    fillStyle: `hsl(${weight.velocity.angle}rad, 50%, 50%)`
   })
 
 }
