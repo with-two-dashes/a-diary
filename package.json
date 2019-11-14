@@ -24,6 +24,7 @@
     "cm11": "cd coding-math/ep-11-gravity && parcel index.html",
     "cm12": "cd coding-math/ep-12-edge-handling && parcel index.html",
     "cm13": "cd coding-math/ep-13-friction && parcel index.html",
-    "cm14": "cd coding-math/ep-14-collision-detection && parcel index.html"
+    "cm14": "cd coding-math/ep-14-collision-detection && parcel index.html",
+    "cm15": "cd coding-math/ep-15-springs-part-1 && parcel index.html"
   }
 }
