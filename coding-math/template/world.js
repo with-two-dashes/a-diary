@@ -7,7 +7,7 @@ import {
 } from './main.js'
 
 import { drawCircle } from '../common/drawCircle.js'
-// import { makeParticle } from '../common/makeParticle.js'
+// import { makeParticle } from '../common/makeParticle2.js'
 // import { makeVector } from '../common/makeVector.js'
 
 // const { width, height } = getCanvas()
