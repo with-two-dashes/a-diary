@@ -1,3 +1,4 @@
+/* globals requestAnimationFrame, cancelAnimationFrame */
 import { useEffect, useRef } from 'react'
 
 export const useRequestAnimationFrame = renderCallback => {
@@ -6,9 +7,9 @@ export const useRequestAnimationFrame = renderCallback => {
   const isFirstRenderRef = useRef()
 
   const animate = timestamp => {
-    if (previousTimeRef.current != undefined) {
+    if (previousTimeRef.current !== undefined) {
       const deltaTime = timestamp - previousTimeRef.current
-      const isFirstRender = isFirstRenderRef.current == undefined
+      const isFirstRender = isFirstRenderRef.current === undefined
       isFirstRenderRef.current = false
       renderCallback({ deltaTime, timestamp, isFirstRender })
     }
