@@ -1,6 +1,6 @@
 import React from 'react'
 import './app.css'
-import { Canvas2d } from './components/Canvas2d.js'
+import { Canvas } from './components/Canvas.js'
 // import { randomRange } from './utilities/randomRange.js'
 import { makeVerletParticle } from './physics/makeVerletParticle.js'
 import { makeVerletConstraint } from './physics/makeVerletConstraint.js'
@@ -325,7 +325,7 @@ export const App = () => {
   return (
     <div className='app'>
       <div className='leftColumn'>
-        <Canvas2d onRender={animate} />
+        <Canvas onRender={animate} />
       </div>
       <div className='rightColumn'>
         <div>Right Column</div>
