@@ -1,5 +1,3 @@
-import { ENGINE_METHOD_ALL } from "constants"
-
 export const makeVerletEngine = ({
   x = 0,
   y = 0,
@@ -10,7 +8,6 @@ export const makeVerletEngine = ({
   range = 0,
   isPinned = false
 }) => {
-
   let internalX = x
   let internalY = y
   let internalBaseX = baseX
@@ -28,54 +25,53 @@ export const makeVerletEngine = ({
 
   return {
     update,
-    get x() {
+    get x () {
       return internalX
     },
-    set x(newX) {
+    set x (newX) {
       internalX = newX
     },
-    get y() {
+    get y () {
       return internalY
     },
-    set y(newY) {
+    set y (newY) {
       internalY = newY
     },
-    get baseX() {
+    get baseX () {
       return internalBaseX
     },
-    set baseX(newBaseX) {
+    set baseX (newBaseX) {
       internalBaseX = newBaseX
     },
-    get baseY() {
+    get baseY () {
       return internalBaseY
     },
-    set baseY(newBaseY) {
+    set baseY (newBaseY) {
       internalBaseY = newBaseY
     },
-    get angle() {
+    get angle () {
       return internalAngle
     },
-    set angle(newAngle) {
+    set angle (newAngle) {
       internalAngle = newAngle
     },
-    get speed() {
+    get speed () {
       return internalSpeed
     },
-    set speed(newSpeed) {
+    set speed (newSpeed) {
       internalSpeed = newSpeed
     },
-    get range() {
+    get range () {
       return internalRange
     },
-    set range(newRange) {
+    set range (newRange) {
       internalRange = newRange
     },
-    get isPinned() {
+    get isPinned () {
       return internalIsPinned
     },
-    set isPinned(newIsPinned) {
+    set isPinned (newIsPinned) {
       internalIsPinned = newIsPinned
     }
   }
-
 }

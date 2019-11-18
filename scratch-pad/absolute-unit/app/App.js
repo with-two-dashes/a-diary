@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import "./app.css"
+import './app.css'
 import { Canvas2d } from './components/Canvas2d.js'
 import { randomRange } from './utilities/randomRange.js'
 import { makeVerletParticle } from './physics/makeVerletParticle.js'
@@ -49,8 +49,8 @@ const ho = 100
 const pointA = makeSimplePoint({
   x: 100 + vo,
   y: 100 + ho,
-  oldX: 85,
-  oldY: 95
+  speed: -50,
+  direction: Math.PI / 2
 })
 
 const pointB = makeSimplePoint({
@@ -69,7 +69,6 @@ const pointD = makeSimplePoint({
   y: 200 + ho
 })
 
-
 const verletParticles = [
   pointA,
   pointB,
@@ -80,36 +79,35 @@ const verletParticles = [
 const verletConstraints = [
   makeSimpleConstraint({
     pointA: pointA,
-    pointB: pointB,
+    pointB: pointB
   }),
   makeSimpleConstraint({
     pointA: pointB,
-    pointB: pointC,
+    pointB: pointC
   }),
   makeSimpleConstraint({
     pointA: pointC,
-    pointB: pointD,
+    pointB: pointD
   }),
   makeSimpleConstraint({
     pointA: pointD,
-    pointB: pointA,
+    pointB: pointA
   }),
   makeSimpleConstraint({
     pointA: pointC,
     pointB: pointA,
-    stiffness: .01,
+    stiffness: 0.01,
     isHidden: false
   }),
   makeSimpleConstraint({
     pointA: pointB,
     pointB: pointD,
-    stiffness: .01,
+    stiffness: 0.01,
     isHidden: false
-  }),
+  })
 ]
 
 export const App = () => {
-
   const triggerClickHandler = () => {
     pointA.vy += 30
   }
@@ -121,17 +119,17 @@ export const App = () => {
       if (!isPinned) {
         if (particle.x + particle.radius > width) {
           particle.x = width - particle.radius
-          particle.oldX = particle.x + vx * particle.bounce
+          particle.vx += vx * particle.bounce
         } else if (particle.x - particle.radius < 0) {
           particle.x = particle.radius
-          particle.oldX = particle.radius + vx * particle.bounce
+          particle.vx += vx * particle.bounce
         }
         if (particle.y + particle.radius > height) {
           particle.y = height - particle.radius
-          particle.oldY = particle.y + vy * particle.bounce
+          particle.vy += vy * particle.bounce
         } else if (particle.y - particle.radius < 0) {
           particle.y = particle.radius
-          particle.oldY = particle.radius + vy * particle.bounce
+          particle.vy += vy * particle.bounce
         }
       }
     }
@@ -204,7 +202,7 @@ export const App = () => {
 
   const renderButton = ({ context, button, index }) => {
     const { pressed, touched, value } = button
-    // the value us going to be 0 = off or 1 = on. 
+    // the value us going to be 0 = off or 1 = on.
     // more testing needs to be done to see
     // if other values are possible.
     const label = `${index}`
@@ -226,7 +224,6 @@ export const App = () => {
     const { width: labelWidth } = context.measureText(label)
     context.fillText(label, x - (labelWidth / 2), y + 3)
     context.fill()
-
   }
 
   const renderGamepad = ({ context, gamepad, index }) => {
@@ -290,14 +287,14 @@ export const App = () => {
       const whenLogic = makeButtonLogicTestMaker(gamepad)
 
       whenLogic({
-        testFn({ buttons }) {
+        testFn ({ buttons }) {
           if (buttons[0].pressed) {
             return true
           } else {
             return false
           }
         },
-        callback() {
+        callback () {
           triggerClickHandler()
         }
       })
@@ -324,9 +321,9 @@ export const App = () => {
   return (
     <div className='app'>
       <div className='leftColumn'>
-        <Canvas2d onRender={animate}></Canvas2d>
+        <Canvas2d onRender={animate} />
       </div>
-      <div className="rightColumn">
+      <div className='rightColumn'>
         <div>Right Column</div>
         <button onClick={triggerClickHandler}>Trigger</button>
       </div>

@@ -5,7 +5,6 @@ export const makeVerletConstraint = ({
   length,
   stiffness = 1.0
 }) => {
-
   let internalPointA = pointA
   let internalPointB = pointB
   let internalLength = length
@@ -32,36 +31,35 @@ export const makeVerletConstraint = ({
 
   return {
     update,
-    get pointA() {
+    get pointA () {
       return internalPointA
     },
-    set pointA(newPointA) {
+    set pointA (newPointA) {
       internalPointA = newPointA
     },
-    get pointB() {
+    get pointB () {
       return internalPointB
     },
-    set pointB(newPointB) {
+    set pointB (newPointB) {
       internalPointB = newPointB
     },
-    get length() {
+    get length () {
       return internalLength
     },
-    set length(newLength) {
+    set length (newLength) {
       internalLength = newLength
     },
-    get isHidden() {
+    get isHidden () {
       return internalIsHidden
     },
-    set isHidden(newIsHidden) {
+    set isHidden (newIsHidden) {
       internalIsHidden = newIsHidden
     },
-    get stiffness() {
+    get stiffness () {
       return internalStiffness
     },
-    set stiffness(newStiffness) {
+    set stiffness (newStiffness) {
       internalStiffness = newStiffness
     }
   }
-
 }

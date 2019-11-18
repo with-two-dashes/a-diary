@@ -42,21 +42,21 @@ export const makeParticle = ({
     }
   }
 
-  function getSpeed() {
+  function getSpeed () {
     return Math.sqrt(internalVX * internalVX + internalVY * internalVY)
   }
 
-  function getHeading() {
+  function getHeading () {
     return Math.atan2(internalVY, internalVX)
   }
 
-  function setHeading(angle) {
+  function setHeading (angle) {
     const speed = getSpeed()
     internalVX = Math.cos(angle) * speed
     internalVY = Math.sin(angle) * speed
   }
 
-  function setSpeed(newSpeed) {
+  function setSpeed (newSpeed) {
     const headingAngle = getHeading()
     internalVX = Math.cos(headingAngle) * newSpeed
     internalVY = Math.sin(headingAngle) * newSpeed
@@ -164,70 +164,70 @@ export const makeParticle = ({
     removeSpring,
     addGravitation,
     removeGravitation,
-    get x() {
+    get x () {
       return internalX
     },
-    set x(newX) {
+    set x (newX) {
       internalX = newX
     },
-    get y() {
+    get y () {
       return internalY
     },
-    set y(newY) {
+    set y (newY) {
       internalY = newY
     },
-    get vx() {
+    get vx () {
       return internalVX
     },
-    set vx(newVX) {
+    set vx (newVX) {
       internalVX = newVX
     },
-    get vy() {
+    get vy () {
       return internalVY
     },
-    set vy(newVY) {
+    set vy (newVY) {
       internalVY = newVY
     },
-    get radius() {
+    get radius () {
       return internalRadius
     },
-    set radius(newRadius) {
+    set radius (newRadius) {
       internalRadius = newRadius
     },
-    get speed() {
+    get speed () {
       return getSpeed()
     },
-    set speed(newSpeed) {
+    set speed (newSpeed) {
       setSpeed(newSpeed)
     },
-    get direction() {
+    get direction () {
       return getHeading()
     },
-    set direction(direction) {
+    set direction (direction) {
       setHeading(direction)
     },
-    get mass() {
+    get mass () {
       return internalMass
     },
-    set mass(newMass) {
+    set mass (newMass) {
       internalMass = newMass
     },
-    get bounce() {
+    get bounce () {
       return internalBounce
     },
-    set bounce(newBounce) {
+    set bounce (newBounce) {
       internalBounce = newBounce
     },
-    get gravity() {
+    get gravity () {
       return internalGravity
     },
-    set gravity(newGravity) {
+    set gravity (newGravity) {
       internalGravity = newGravity
     },
-    get friction() {
+    get friction () {
       return internalFriction
     },
-    set friction(newFriction) {
+    set friction (newFriction) {
       internalFriction = newFriction
     }
   }

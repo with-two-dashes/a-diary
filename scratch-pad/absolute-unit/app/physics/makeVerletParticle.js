@@ -12,16 +12,44 @@ export const makeVerletParticle = ({
   friction = 1,
   isPinned = false
 }) => {
-
   let internalX = x
   let internalY = y
-  let internalOldX = oldX
-  let internalOldY = oldY
+  let internalOldX = oldX || x
+  let internalOldY = oldY || y
   let internalRadius = radius
   let internalBounce = bounce
   let internalGravity = gravity
   let internalFriction = friction
   let internalIsPinned = isPinned
+  let internalMass = mass
+
+  setSpeed(speed)
+  setDirection(direction)
+
+  function getSpeed () {
+    const vx = internalX - internalOldX
+    const vy = internalY - internalOldY
+    return Math.sqrt((vx * vx) + (vy * vy))
+  }
+
+  function setSpeed (newSpeed) {
+    const angle = getDirection()
+    internalOldX += Math.cos(angle) * newSpeed
+    internalOldY += Math.sin(angle) * newSpeed
+  }
+
+  function getDirection () {
+    const speed = getSpeed()
+    const vx = (internalX - internalOldX) * speed
+    const vy = (internalY - internalOldY) * speed
+    return Math.atan2(vy, vx)
+  }
+
+  function setDirection (newAngle) {
+    const speed = getSpeed()
+    internalOldX += Math.cos(newAngle) * speed
+    internalOldY += Math.sin(newAngle) * speed
+  }
 
   const update = () => {
     if (!internalIsPinned) {
@@ -37,71 +65,89 @@ export const makeVerletParticle = ({
 
   const api = {
     update,
-    get x() {
+    get x () {
       return internalX
     },
-    set x(newX) {
+    set x (newX) {
       internalX = newX
     },
-    get y() {
+    get y () {
       return internalY
     },
-    set y(newY) {
+    set y (newY) {
       internalY = newY
     },
-    get oldX() {
-      return internalOldX
-    },
-    set oldX(newOldX) {
-      internalOldX = newOldX
-    },
-    get oldY() {
-      return internalOldY
-    },
-    set oldY(newOldY) {
-      internalOldY = newOldY
-    },
-    get vx() {
+    get vx () {
       return internalX - internalOldX
     },
-    set vx(newVX) {
+    set vx (newVX) {
       internalOldX += newVX
     },
-    get vy() {
+    get vy () {
       return internalY - internalOldY
     },
-    set vy(newVY) {
+    set vy (newVY) {
       internalOldY += newVY
     },
-    get radius() {
+    get oldX () {
+      return internalOldX
+    },
+    set oldX (newOldX) {
+      internalOldX = newOldX
+    },
+    get oldY () {
+      return internalOldY
+    },
+    set oldY (newOldY) {
+      internalOldY = newOldY
+    },
+    get radius () {
       return internalRadius
     },
-    set radius(newRadius) {
+    set radius (newRadius) {
       internalRadius = newRadius
     },
-    get bounce() {
+    get bounce () {
       return internalBounce
     },
-    set bounce(newBounce) {
+    set bounce (newBounce) {
       internalBounce = newBounce
     },
-    get gravity() {
+    get gravity () {
       return internalGravity
     },
-    set gravity(newGravity) {
+    set gravity (newGravity) {
       internalGravity = newGravity
     },
-    get friction() {
+    get friction () {
       return internalFriction
     },
-    set friction(newFriction) {
+    set friction (newFriction) {
       internalFriction = newFriction
     },
-    get isPinned() {
+    get isPinned () {
       return internalIsPinned
     },
-    set isPinned(newIsPinned) {
+    set isPinned (newIsPinned) {
       internalIsPinned = newIsPinned
+    },
+    get mass () {
+      return internalMass
+    },
+    set mass (newMass) {
+      internalMass = newMass
+    },
+    get direction () {
+      return getDirection()
+    },
+    set direction (angle) {
+      setDirection(angle)
+    },
+    get speed () {
+      return getSpeed()
+    },
+    set speed (newSpeed) {
+      setSpeed(newSpeed)
     }
   }
 
