@@ -1,9 +1,8 @@
 import { useEffect } from 'react'
 
-export const useGamePadEvents = () => {
+export const useGamepads = () => {
   const connectSubscribers = new Set()
   const disconnectSubscribers = new Set()
-  const buttonSubscribers = new Map()
 
   const handleGamepadConnected = event => {
     for (const subscriber of connectSubscribers.values()) {
@@ -28,7 +27,7 @@ export const useGamePadEvents = () => {
   }, [])
 
   return {
-    onGamepadConnected(callback) {
+    onGamepadConnected (callback) {
       if (connectSubscribers.has(callback) === false) {
         connectSubscribers.add(callback)
       }
@@ -38,7 +37,7 @@ export const useGamePadEvents = () => {
         }
       }
     },
-    onGamepadDisconnected(callback) {
+    onGamepadDisconnected (callback) {
       if (disconnectSubscribers.has(callback) === false) {
         disconnectSubscribers.add(callback)
       }
@@ -48,10 +47,10 @@ export const useGamePadEvents = () => {
         }
       }
     },
-    getGamepads() {
+    getGamepads () {
       return navigator.getGamepads()
     },
-    makeButtonLogicTestMaker(gamepadInstance) {
+    makeButtonLogicTestMaker (gamepadInstance) {
       return ({ testFn, callback }) => {
         if (testFn(gamepadInstance)) {
           callback()
@@ -60,4 +59,3 @@ export const useGamePadEvents = () => {
     }
   }
 }
-

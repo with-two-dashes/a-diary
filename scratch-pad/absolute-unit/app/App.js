@@ -1,15 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './app.css'
 import { Canvas2d } from './components/Canvas2d.js'
-import { randomRange } from './utilities/randomRange.js'
+// import { randomRange } from './utilities/randomRange.js'
 import { makeVerletParticle } from './physics/makeVerletParticle.js'
 import { makeVerletConstraint } from './physics/makeVerletConstraint.js'
-import { useGamePadEvents } from './hooks/useGamePadEvents.js'
+import { useGamepads } from './hooks/useGamepads.js'
 import { getDistance } from './utilities/getDistance.js'
 
-const physicsAccuracyLoopCount = 5
-
-let activeGamepads = []
+const physicsAccuracyLoopCount = 10
 
 const makeSimplePoint = ({ x, y, oldX: anOldY, oldY: anOldX, ...rest }) => {
   const gravity = 0.5
@@ -147,13 +145,13 @@ export const App = () => {
     }
   }
 
-  const renderVerletPoints = ({ context }) => {
-    context.beginPath()
-    for (const particle of verletParticles) {
-      context.arc(particle.x, particle.y, particle.radius, Math.PI * 2, false)
-    }
-    context.fill()
-  }
+  // const renderVerletPoints = ({ context }) => {
+  //   context.beginPath()
+  //   for (const particle of verletParticles) {
+  //     context.arc(particle.x, particle.y, particle.radius, Math.PI * 2, false)
+  //   }
+  //   context.fill()
+  // }
 
   const renderVerletSticks = ({ context }) => {
     context.beginPath()
@@ -201,7 +199,8 @@ export const App = () => {
   }
 
   const renderButton = ({ context, button, index }) => {
-    const { pressed, touched, value } = button
+    // const { pressed, touched, value } = button
+    const { pressed, touched } = button
     // the value us going to be 0 = off or 1 = on.
     // more testing needs to be done to see
     // if other values are possible.
@@ -228,24 +227,29 @@ export const App = () => {
 
   const renderGamepad = ({ context, gamepad, index }) => {
     if (gamepad) {
+      // const {
+      //   axes,
+      //   buttons,
+      //   connected,
+      //   displayId,
+      //   hand,
+      //   hapticActuators,
+      //   id,
+      //   index,
+      //   mapping,
+      //   pose,
+      //   timestamp
+      // } = gamepad
       const {
         axes,
         buttons,
-        connected,
-        displayId,
-        hand,
-        hapticActuators,
-        id,
-        index,
-        mapping,
-        pose,
-        timestamp
+        id
       } = gamepad
 
       context.beginPath()
       context.fillStyle = 'black'
       context.fillText(id, 20, 10)
-      context.fill
+      context.fill()
 
       let axisIndex = 0
       for (const axis of axes) {
@@ -308,7 +312,7 @@ export const App = () => {
     onGamepadDisconnected,
     getGamepads,
     makeButtonLogicTestMaker
-  } = useGamePadEvents()
+  } = useGamepads()
 
   onGamepadConnected(event => {
     console.log('GamepadDetected', event)
