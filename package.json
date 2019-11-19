@@ -29,6 +29,7 @@
     "cm16": "cd coding-math/ep-16-springs-part-2 && parcel index.html",
     "cm17": "cd coding-math/ep-17-particle-optimization && parcel index.html",
     "cm18": "cd coding-math/ep-18-particle-enhancement && parcel index.html",
-    "cm19": "cd coding-math/ep-19-bezier-curves && parcel index.html"
+    "cm19": "cd coding-math/ep-19-bezier-curves && parcel index.html",
+    "au": "cd scratch-pad/absolute-unit && yarn start"
   }
 }

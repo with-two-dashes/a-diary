@@ -6,6 +6,7 @@ import { makeVerletParticle } from './physics/makeVerletParticle.js'
 import { makeVerletConstraint } from './physics/makeVerletConstraint.js'
 import { useGamepads } from './hooks/useGamepads.js'
 import { getDistance } from './utilities/getDistance.js'
+import { norm } from './utilities/norm.js'
 
 const physicsAccuracyLoopCount = 10
 
@@ -165,64 +166,137 @@ export const App = () => {
     context.stroke()
   }
 
-  const renderAxis = ({ context, axis, index }) => {
-    const isX = index % 2 === 0
-    const isY = index % 2 === 1
-    const x = 30 * (index + 1)
-    const y = 80
-    if (isX) {
+  const renderAxes = ({ context, axes }) => {
+    let axisIndex = 0
+    let left = 100
+    let top = 100
+    const length = 100
+    for (const axisValue of axes) {
+      renderAxis({ axis: axisValue, index: axisIndex })
+      axisIndex++
+    }
+    function renderAxis({ axis, index }) {
+      let xValue = 0
+      let yValue = 0
+      const isX = index % 2 === 0
+      const isY = !isX
+      const groupIndex = Math.floor(index / 2)
+
+      const length = 100
+
+      const normalizedValue = norm({ min: 1, max: -1, value: axis })
+
+      const totalWidth = length * 2
+
+      const leftMargin = 64
+
+      const leftOffset = 100 + (totalWidth * groupIndex) + leftMargin * groupIndex
+      const topOffset = 200// * (groupIndex + 1)
+
+      const rightLimit = leftOffset + 2 * length
+      const bottomLimit = topOffset + 2 * length
+
+      if (isX) {
+        xValue = normalizedValue * length
+      }
+      if (isY) {
+        yValue = normalizedValue * length
+      }
+
+      const x = leftOffset + xValue
+      const y = topOffset + yValue
+
       context.beginPath()
-      context.fillStyle = `rgba(0,0,0,${Math.abs(axis)})`
-      context.arc(x, y, 10, 0, Math.PI * 2, false)
-      context.fill()
+      context.strokeStyle = 'lime'
+      context.moveTo(leftOffset, topOffset)
+      context.lineTo(leftOffset + length * 2, topOffset)
+      context.moveTo(leftOffset, topOffset)
+      context.lineTo(leftOffset, topOffset + length * 2)
       context.stroke()
-    }
-    if (isY) {
+
       context.beginPath()
-      context.fillStyle = `rgba(0,0,0,${Math.abs(axis)})`
-      context.arc(x, y, 10, 0, Math.PI * 2, false)
+      context.fillStyle = `rgba(0,0,0,1)`
+      context.fillText(`( ${axisIndex} )  ${axis}`, x + 10, y - 10)
+      context.arc(x, y, 10, 0, Math.PI * 2)
       context.fill()
-      context.stroke()
+
+      context.beginPath()
+      context.fillStyle = 'gold'
+      context.arc(x, topOffset, 3, 0, Math.PI * 2)
+      context.fill()
+
+      if (isY) {
+        context.beginPath()
+        context.strokeStyle = 'black'
+        context.moveTo(x, y)
+        context.lineTo(x + length * 2, y)
+        context.stroke()
+
+        context.beginPath()
+        context.fillStyle = 'white'
+        context.arc(x, topOffset + length, 3, 0, Math.PI * 2)
+        context.fill()
+
+        context.beginPath()
+        context.fillStyle = 'teal'
+        context.arc(x, bottomLimit, 3, 0, Math.PI * 2)
+        context.fill()
+      }
+      if (isX) {
+        context.beginPath()
+        context.strokeStyle = 'black'
+        context.moveTo(x, y)
+        context.lineTo(x, y + length * 2)
+        context.stroke()
+
+        context.beginPath()
+        context.fillStyle = 'white'
+        context.arc(leftOffset + length, y, 3, 0, Math.PI * 2)
+        context.fill()
+
+        context.beginPath()
+        context.fillStyle = 'red'
+        context.arc(rightLimit, y, 3, 0, Math.PI * 2)
+        context.fill()
+      }
     }
-    context.beginPath()
-    context.fillStyle = 'black'
-    const verticalOffset = 2
-    if (isX) {
-      const { width: labelWidth } = context.measureText('x')
-      context.fillText('x', x - (labelWidth / 2), y + verticalOffset)
-    }
-    if (isY) {
-      const { width: labelWidth } = context.measureText('y')
-      context.fillText('y', x - (labelWidth / 2), y + verticalOffset)
-    }
-    context.fill()
   }
 
-  const renderButton = ({ context, button, index }) => {
-    // const { pressed, touched, value } = button
-    const { pressed, touched } = button
-    // the value us going to be 0 = off or 1 = on.
-    // more testing needs to be done to see
-    // if other values are possible.
-    const label = `${index}`
-    context.beginPath()
-    const x = 30 * (index + 1)
-    const y = 30
-    if (pressed) {
-      context.fillStyle = 'red'
-    } else if (touched) {
-      context.fillStyle = 'green'
-    } else {
-      context.fillStyle = 'rgba(0,0,0,.125)'
-    }
-    context.arc(x, y, 10, 0, Math.PI * 2, false)
-    context.fill()
+  const renderButtons = ({ context, buttons }) => {
 
-    context.beginPath()
-    context.fillStyle = 'black'
-    const { width: labelWidth } = context.measureText(label)
-    context.fillText(label, x - (labelWidth / 2), y + 3)
-    context.fill()
+    let buttonIndex = 0
+    for (const button of buttons) {
+      renderButton({ context, button, index: buttonIndex })
+      buttonIndex++
+    }
+
+    function renderButton({ button, index }) {
+      // const { pressed, touched, value } = button
+      const { pressed, touched } = button
+      // the value us going to be 0 = off or 1 = on.
+      // more testing needs to be done to see
+      // if other values are possible.
+      const label = `${index}`
+      context.beginPath()
+      const x = 30 * (index + 1)
+      const y = 30
+      if (pressed) {
+        context.fillStyle = 'red'
+      } else if (touched) {
+        context.fillStyle = 'green'
+      } else {
+        context.fillStyle = 'rgba(0,0,0,.125)'
+      }
+      context.arc(x, y, 10, 0, Math.PI * 2, false)
+      context.fill()
+
+      context.beginPath()
+      context.fillStyle = 'black'
+      const { width: labelWidth } = context.measureText(label)
+      context.fillText(label, x - (labelWidth / 2), y + 3)
+      context.fill()
+    }
+
   }
 
   const renderGamepad = ({ context, gamepad, index }) => {
@@ -251,17 +325,9 @@ export const App = () => {
       context.fillText(id, 20, 10)
       context.fill()
 
-      let axisIndex = 0
-      for (const axis of axes) {
-        renderAxis({ context, axis, index: axisIndex })
-        axisIndex++
-      }
+      renderAxes({ context, axes })
+      renderButtons({ context, buttons })
 
-      let buttonIndex = 0
-      for (const button of buttons) {
-        renderButton({ context, button, index: buttonIndex })
-        buttonIndex++
-      }
     } else {
       console.log('No Gamepad:', index)
     }
@@ -291,14 +357,14 @@ export const App = () => {
       const whenLogic = makeButtonLogicTestMaker(gamepad)
 
       whenLogic({
-        testFn ({ buttons }) {
+        testFn({ buttons }) {
           if (buttons[0].pressed) {
             return true
           } else {
             return false
           }
         },
-        callback () {
+        callback() {
           triggerClickHandler()
         }
       })
