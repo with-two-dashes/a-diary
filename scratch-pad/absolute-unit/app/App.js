@@ -7,6 +7,9 @@ import { makeVerletConstraint } from './physics/makeVerletConstraint.js'
 import { useGamepads } from './hooks/useGamepads.js'
 import { getDistance } from './utilities/getDistance.js'
 import { norm } from './utilities/norm.js'
+import { lerp } from './utilities/lerp.js'
+import { drawCircle } from './utilities/drawCircle.js'
+import { isatty } from 'tty'
 
 const physicsAccuracyLoopCount = 10
 
@@ -156,6 +159,8 @@ export const App = () => {
 
   const renderVerletSticks = ({ context }) => {
     context.beginPath()
+    context.strokeStyle = 'black'
+    context.lineWidth = 1
     for (const constraint of verletConstraints) {
       const { pointA, pointB, isHidden } = constraint
       if (!isHidden) {
@@ -166,7 +171,7 @@ export const App = () => {
     context.stroke()
   }
 
-  const renderAxes = ({ context, axes }) => {
+  const renderAxesOld = ({ context, axes }) => {
     let axisIndex = 0
     let left = 100
     let top = 100
@@ -190,8 +195,8 @@ export const App = () => {
 
       const leftMargin = 64
 
-      const leftOffset = 100 + (totalWidth * groupIndex) + leftMargin * groupIndex
-      const topOffset = 200// * (groupIndex + 1)
+      const leftOffset = 100 + (totalWidth * groupIndex) + (leftMargin * groupIndex)
+      const topOffset = 200
 
       const rightLimit = leftOffset + 2 * length
       const bottomLimit = topOffset + 2 * length
@@ -206,61 +211,239 @@ export const App = () => {
       const x = leftOffset + xValue
       const y = topOffset + yValue
 
-      context.beginPath()
-      context.strokeStyle = 'lime'
-      context.moveTo(leftOffset, topOffset)
-      context.lineTo(leftOffset + length * 2, topOffset)
-      context.moveTo(leftOffset, topOffset)
-      context.lineTo(leftOffset, topOffset + length * 2)
-      context.stroke()
+      let graphValueX = x
+      let graphValueY = y
 
+      if (isY) {
+        graphValueX += length
+      }
+      if (isX) {
+        graphValueY += length
+      }
+
+      // "A man's gotta know his limitations."
+      //   -- a movie I haven't seen.
+      //    -- researched: Dirty Harry, 
+      //     -- The script line is different from the film line.
+      // context.beginPath()
+      // context.strokeStyle = 'lime'
+      // context.moveTo(leftOffset, topOffset)
+      // context.lineTo(leftOffset + length * 2, topOffset)
+      // context.moveTo(leftOffset, topOffset)
+      // context.lineTo(leftOffset, topOffset + length * 2)
+      // context.stroke()
+
+      // lets read something.
       context.beginPath()
-      context.fillStyle = `rgba(0,0,0,1)`
+      context.fillStyle = `black`
       context.fillText(`( ${axisIndex} )  ${axis}`, x + 10, y - 10)
+
+      // our large dot
+      context.beginPath()
+      context.fill()
       context.arc(x, y, 10, 0, Math.PI * 2)
       context.fill()
 
-      context.beginPath()
-      context.fillStyle = 'gold'
-      context.arc(x, topOffset, 3, 0, Math.PI * 2)
-      context.fill()
+      // the golden origin
+      // I show both their furthest limits.
+      // context.beginPath()
+      // context.fillStyle = 'gold'
+      // context.arc(x, topOffset, 3, 0, Math.PI * 2)
+      // context.fill()
 
       if (isY) {
+        context.beginPath()
+        context.fillStyle = 'white'
+        context.arc(leftOffset, topOffset, 3, 0, Math.PI * 2)
+        context.fill()
+        // here we see the bounds of our reality
+        context.beginPath()
+        context.strokeStyle = 'lime'
+        context.moveTo(leftOffset, topOffset)
+        context.lineTo(leftOffset, topOffset + length * 2)
+        context.stroke()
+        // a horizontal line, to highlight your verticality,
         context.beginPath()
         context.strokeStyle = 'black'
         context.moveTo(x, y)
         context.lineTo(x + length * 2, y)
         context.stroke()
 
+        // a small white dot at the center
         context.beginPath()
         context.fillStyle = 'white'
         context.arc(x, topOffset + length, 3, 0, Math.PI * 2)
         context.fill()
 
+        // the furthest of our lower reach
         context.beginPath()
-        context.fillStyle = 'teal'
+        context.fillStyle = 'white'
         context.arc(x, bottomLimit, 3, 0, Math.PI * 2)
         context.fill()
       }
       if (isX) {
+        context.beginPath()
+        context.fillStyle = 'white'
+        context.arc(leftOffset, topOffset, 3, 0, Math.PI * 2)
+        context.fill()
+        // I show you the bounds of your reality.
+        context.beginPath()
+        context.strokeStyle = 'lime'
+        context.moveTo(leftOffset, topOffset)
+        context.lineTo(leftOffset + length * 2, topOffset)
+        context.stroke()
+        // a vertical line, to show off your horizontal nature.
         context.beginPath()
         context.strokeStyle = 'black'
         context.moveTo(x, y)
         context.lineTo(x, y + length * 2)
         context.stroke()
 
+        // a small white dot for the center
         context.beginPath()
         context.fillStyle = 'white'
         context.arc(leftOffset + length, y, 3, 0, Math.PI * 2)
         context.fill()
 
+        // the furthest right we can reach.
         context.beginPath()
-        context.fillStyle = 'red'
+        context.fillStyle = 'white'
         context.arc(rightLimit, y, 3, 0, Math.PI * 2)
         context.fill()
       }
+
+      context.beginPath()
+      context.strokeStyle = 'red'
+      context.arc(graphValueX, graphValueY, 60, 0, Math.PI * 2, false)
+      context.stroke()
+      context.beginPath()
+      context.arc(graphValueX, graphValueY, 10, 0, Math.PI * 2, false)
+      context.stroke()
     }
   }
+
+  const renderAxes = ({ context, axes }) => {
+
+    const offsetLeft = 200
+    const offsetTop = 300
+
+    const [
+      rawLeftAnalogX,
+      rawLeftAnalogY,
+      rawRightAnalogX,
+      rawRightAnalogY,
+    ] = axes
+    context.beginPath()
+
+    const leftAnalogStick = {
+      x: rawLeftAnalogX,
+      y: rawLeftAnalogY
+    }
+
+    const rightAnalogStick = {
+      x: rawRightAnalogX,
+      y: rawRightAnalogY
+    }
+
+    const renderStick = ({ context, valueX, valueY, baseX, baseY, size, indexes }) => {
+
+      const [xIndex, yIndex] = indexes
+
+      const normalizedValueX = norm({ min: -1, max: 1, value: valueX })
+      const normalizedValueY = norm({ min: -1, max: 1, value: valueY })
+
+      const scaledSizeX = normalizedValueX * (size)
+      const scaledSizeY = normalizedValueY * (size)
+
+      const centerX = baseX + size / 2
+      const centerY = baseY + size / 2
+
+      context.beginPath()
+      context.fillStyle = 'black'
+      context.fillText(`[ ${xIndex} ] X: ${valueX}`, baseX - size / 2, baseY + (size * 2))
+      context.fillText(`[ ${yIndex} ] Y: ${valueY}`, baseX - size / 2, baseY + (size * 2) + 16)
+
+      context.beginPath()
+      context.fillStyle = '#eee'
+      context.strokeStyle = 'black'
+      drawCircle({
+        context,
+        x: centerX,
+        y: centerY,
+        radius: size
+      })
+      context.stroke()
+      context.fill()
+
+      context.beginPath()
+      context.fillStyle = 'rgba(0,0,0,.5)'
+      drawCircle({
+        context,
+        x: baseX + scaledSizeX,
+        y: baseY + scaledSizeY,
+        radius: size / 2
+      })
+      context.fill()
+
+      context.beginPath()
+      context.strokeStyle = `white`
+      context.lineWidth = `1.5`
+      drawCircle({
+        context,
+        x: centerX,
+        y: centerY,
+        radius: size / 4
+      })
+      context.stroke()
+
+      context.beginPath()
+      context.strokeStyle = 'rgba(255,255,255,.25)'
+      context.lineWidth = `1.5`
+      drawCircle({
+        context,
+        x: centerX,
+        y: centerY,
+        radius: size / 2
+      })
+      context.stroke()
+
+      context.beginPath()
+      context.fillStyle = 'white'
+      drawCircle({
+        context,
+        x: baseX + scaledSizeX,
+        y: baseY + scaledSizeY,
+        // x: baseX + size,
+        // y: baseY + size,
+        radius: size / 16
+      })
+      context.fill()
+    }
+
+    renderStick({
+      context,
+      size: 30,
+      valueX: leftAnalogStick.x,
+      valueY: leftAnalogStick.y,
+      baseX: offsetLeft,
+      baseY: offsetTop,
+      indexes: [
+        0, 1
+      ]
+    })
+
+    renderStick({
+      context,
+      size: 30,
+      valueX: rightAnalogStick.x,
+      valueY: rightAnalogStick.y,
+      baseX: offsetLeft + 200,
+      baseY: offsetTop,
+      indexes: [
+        2, 3
+      ]
+    })
+  } // end of renderAxes
 
   const renderButtons = ({ context, buttons }) => {
 
@@ -276,6 +459,9 @@ export const App = () => {
       // the value us going to be 0 = off or 1 = on.
       // more testing needs to be done to see
       // if other values are possible.
+
+      let isActive = pressed || touched
+
       const label = `${index}`
       context.beginPath()
       const x = 30 * (index + 1)
@@ -291,7 +477,11 @@ export const App = () => {
       context.fill()
 
       context.beginPath()
-      context.fillStyle = 'black'
+      if (isActive) {
+        context.fillStyle = 'yellow'
+      } else {
+        context.fillStyle = 'black'
+      }
       const { width: labelWidth } = context.measureText(label)
       context.fillText(label, x - (labelWidth / 2), y + 3)
       context.fill()

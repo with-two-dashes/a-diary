@@ -1,1 +1,1 @@
-export const norm = ({ min, max, value }) => (value - min) - (max - min)
+export const norm = ({ min, max, value }) => (value - Math.min(min, max)) / (Math.max(min, max) - Math.min(min, max))
