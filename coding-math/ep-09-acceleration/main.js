@@ -16,7 +16,7 @@ const p1 = makeParticle({
   x: 200,
   y: 700,
   speed: 10,
-  direction: - Math.PI / 2
+  direction: -Math.PI / 2
 })
 
 const accel = makeVector({
@@ -32,7 +32,7 @@ const buildParticles = makeRepeater(() => {
   const x = 500
   const y = 300
   const speed = 10 * Math.random() + 2
-  const direction = - Math.PI * 2 * Math.random()
+  const direction = -Math.PI * 2 * Math.random()
   const gravity = 0.1
   particles.push(makeParticle({
     x,

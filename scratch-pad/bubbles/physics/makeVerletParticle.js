@@ -1,4 +1,7 @@
+import { makeVector } from './makeVector.js'
+
 export const makeVerletParticle = ({
+  id,
   x = 0,
   y = 0,
   oldX = 0,
@@ -10,8 +13,10 @@ export const makeVerletParticle = ({
   radius = 0,
   bounce = 1,
   friction = 1,
-  isPinned = false
+  isPinned = false,
+  ...rest
 }) => {
+  let internalID = id || Math.floor(Math.random() * 1000000000000)
   let internalX = x
   let internalY = y
   let internalOldX = oldX || x
@@ -62,9 +67,21 @@ export const makeVerletParticle = ({
       internalY += internalGravity
     }
   }
-
   const api = {
     update,
+    collideWith,
+    get velocityVector () {
+      return getVelocityVector()
+    },
+    set velocityVector (vector) {
+      setVelocityVector(vector)
+    },
+    get id () {
+      return internalID
+    },
+    set id (newID) {
+      internalID = newID
+    },
     get x () {
       return internalX
     },
@@ -148,6 +165,70 @@ export const makeVerletParticle = ({
     },
     set speed (newSpeed) {
       setSpeed(newSpeed)
+    },
+    ...rest
+  }
+
+  function getVelocityVector () {
+    const vector = makeVector({})
+    vector.angle = getDirection()
+    vector.length = getSpeed()
+    return vector
+  }
+
+  function setVelocityVector (vector) {
+    setDirection(vector.angle)
+    setSpeed(vector.length)
+  }
+
+  function collideWith (otherParticle, context) {
+    const spring = 0.3
+    if (otherParticle.id !== internalID) { // don't collide with yourself.
+      const diffX = internalX - otherParticle.x
+      const diffY = internalY - otherParticle.y
+      const distanceOfCenters = Math.sqrt((diffX * diffX) + (diffY * diffY))
+      const touchingDistance = otherParticle.radius + internalRadius
+
+      const angle = Math.atan2(diffY, diffX)
+      const changeRequired = (touchingDistance - distanceOfCenters) / 2
+
+      const ammountToChangeX = Math.cos(angle) * changeRequired
+      const ammountToChangeY = Math.sin(angle) * changeRequired
+
+      const internalVX = (internalX - internalOldX)
+      const internalVY = (internalY - internalOldY)
+
+      const otherVX = (otherParticle.x - otherParticle.oldX)
+      const otherVY = (otherParticle.y - otherParticle.oldY)
+
+      const internalVelocity = makeVector({
+        x: internalVX,
+        y: internalVY
+      })
+
+      const otherVelocity = makeVector({
+        x: otherVX,
+        y: otherVY
+      })
+
+      const newVelocity = internalVelocity.add(otherVelocity)
+      // const otherReversed = otherVelocity.subtract(internalVelocity)
+
+      const internalNewVX = newVelocity.x / 2
+      const internalNewVY = newVelocity.y / 2
+
+      const otherNewVX = -newVelocity.x / 2
+      const otherNewVY = -newVelocity.y / 2
+
+      internalX += ammountToChangeX
+      internalY += ammountToChangeY
+      internalOldX = internalX + internalNewVX
+      internalOldY = internalY + internalNewVY
+
+      otherParticle.x -= ammountToChangeX
+      otherParticle.y -= ammountToChangeY
+      otherParticle.oldX = otherParticle.x + otherNewVX
+      otherParticle.oldY = otherParticle.y + otherNewVY
     }
   }
 
