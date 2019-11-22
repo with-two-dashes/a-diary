@@ -33,6 +33,7 @@
     "cm19": "cd coding-math/ep-19-bezier-curves && parcel index.html",
     "au": "cd scratch-pad/absolute-unit && yarn start",
     "bubbles": "cd scratch-pad/bubbles && yarn start",
-    "eon": "cd scratch-pad/eon && parcel index.html"
+    "eon": "cd scratch-pad/eon && parcel index.html",
+    "frank": "cd scratch-pad/frank && node main.js"
   }
 }
