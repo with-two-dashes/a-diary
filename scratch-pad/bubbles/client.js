@@ -56,7 +56,10 @@ const sizeCanvas = ({ context }) => {
   return wasResized
 }
 
+let lastTimestamp = 0
+
 const heartbeat = timestamp => {
+  const deltaTime = timestamp - lastTimestamp
   if (isFrameByFrameMode === false) {
     requestAnimationFrame(heartbeat)
   }
@@ -72,8 +75,10 @@ const heartbeat = timestamp => {
     timestamp,
     resized,
     context,
-    canvas
+    canvas,
+    deltaTime,
   })
+  lastTimestamp = timestamp
 }
 
 requestAnimationFrame(heartbeat)

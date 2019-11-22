@@ -5,10 +5,13 @@ import { makeVerletConstraint } from './physics/makeVerletConstraint.js'
 import { constrainWithin } from './physics/constrainWithin.js'
 import { circleCollision } from './physics/circleCollision.js'
 
+import { simulation } from './physics/simulation.js'
+
+const PhysicsLoopCount = 5
+
 const mouseParticle = makeVerletParticle({
   radius: 10,
   x: 100,
-  // gravity: 2,
   bounce: 0.9,
   speed: 10,
   friction: 0.99,
@@ -16,7 +19,7 @@ const mouseParticle = makeVerletParticle({
 })
 
 let worldParticles = []
-const worldParticleCount = 50
+const worldParticleCount = 100
 
 const colors = [
   'red',
@@ -31,19 +34,17 @@ const colors = [
   'magenta'
 ]
 
+const { makeParticle, step } = simulation({ globalGravityY: 0.4 })
+
 let counter = 0
 while (worldParticleCount > worldParticles.length) {
-  worldParticles.push(makeVerletParticle({
-    id: counter,
-    x: Math.random() * 600 + 50,
-    y: Math.random() * 300,
-    speed: 50,
-    direction: Math.random() * Math.PI * 2,
-    radius: 20,
-    gravity: 1,
-    friction: 0.9999,
-    // bounce: 0.9,
-    fillStyle: colors[counter % colors.length - 1]
+  worldParticles.push(makeParticle({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    radius: 5,
+    fillStyle: colors[counter % colors.length],
+    friction: 0.999999,
+    mass: 1
   }))
   counter++
 }
@@ -57,7 +58,8 @@ const getParticlesCollidingWith = (particle) => {
 export const render = ({
   context,
   clearCanvas,
-  mouse: { position, isMouseDown }
+  mouse: { position, isMouseDown },
+  deltaTime
 }) => {
   const { canvas: { height, width } } = context
   clearCanvas()
@@ -71,40 +73,22 @@ export const render = ({
 
   mouseParticle.update()
 
-  for (const worldParticle of worldParticles) {
-    worldParticle.update()
+  step(deltaTime)
 
-    const collisions = getParticlesCollidingWith(worldParticle)
-
-    for (const collision of collisions) {
-      worldParticle.collideWith(collision, context)
-    }
-
-    constrainWithin({
-      minX: 0,
-      minY: 0,
-      maxX: width,
-      maxY: height,
-      particle: worldParticle
+  for (const particle of worldParticles) {
+    particle.setWorldConstraints({
+      left: 0,
+      top: 0,
+      bottom: height,
+      right: width,
     })
-
     drawCircle({
       context,
-      x: worldParticle.x,
-      y: worldParticle.y,
-      radius: worldParticle.radius,
-      fillStyle: worldParticle.fillStyle
+      x: particle.x,
+      y: particle.y,
+      radius: particle.radius,
+      fillStyle: particle.fillStyle
     })
-
-    // const angle = Math.atan2(worldParticle.y - worldParticle.oldY, worldParticle.x - worldParticle.oldX)
-
-    // const extension = 30
-
-    // context.beginPath()
-    // context.strokeStyle = 'white'
-    // context.moveTo(worldParticle.x, worldParticle.y)
-    // context.lineTo(worldParticle.x + Math.cos(angle) * extension, worldParticle.y + Math.sin(angle) * extension)
-    // context.stroke()
   }
 
   constrainWithin({

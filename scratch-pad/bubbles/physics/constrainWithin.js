@@ -6,6 +6,7 @@ export const constrainWithin = ({
   particle
 }) => {
   const { radius, vx, vy, bounce } = particle
+
   if (particle.y + radius > maxY) {
     particle.y = maxY - radius
     particle.oldY = maxY - radius + (vy * bounce)

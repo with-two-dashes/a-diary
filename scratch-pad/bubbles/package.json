@@ -6,5 +6,8 @@
   "private": true,
   "scripts": {
     "start": "parcel index.html"
+  },
+  "dependencies": {
+    "ammo.js": "^0.0.10"
   }
 }

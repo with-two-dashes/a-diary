@@ -28,29 +28,53 @@ export const makeVerletParticle = ({
   let internalIsPinned = isPinned
   let internalMass = mass
 
+  let internalStoredAccelerationX = 0
+  let internalStoredAccelerationY = 0
+
   setSpeed(speed)
   setDirection(direction)
 
-  function getSpeed () {
+  function considerGravity() {
+    internalStoredAccelerationY += internalGravity
+  }
+
+  function accelerate(delta) {
+    const deltaSquared = delta * delta
+    internalX += internalStoredAccelerationX * deltaSquared
+    internalY += internalStoredAccelerationY * deltaSquared
+    internalStoredAccelerationX = 0
+    internalStoredAccelerationY = 0
+  }
+
+  function inertia(delta) {
+    const x = internalX * 2 - internalOldX
+    const y = internalY * 2 - internalOldY
+    internalOldX = internalX * delta
+    internalOldY = internalY * delta
+    internalX = x
+    internalY = y
+  }
+
+  function getSpeed() {
     const vx = internalX - internalOldX
     const vy = internalY - internalOldY
     return Math.sqrt((vx * vx) + (vy * vy))
   }
 
-  function setSpeed (newSpeed) {
+  function setSpeed(newSpeed) {
     const angle = getDirection()
     internalOldX += Math.cos(angle) * newSpeed
     internalOldY += Math.sin(angle) * newSpeed
   }
 
-  function getDirection () {
+  function getDirection() {
     const speed = getSpeed()
     const vx = (internalX - internalOldX) * speed
     const vy = (internalY - internalOldY) * speed
     return Math.atan2(vy, vx)
   }
 
-  function setDirection (newAngle) {
+  function setDirection(newAngle) {
     const speed = getSpeed()
     internalOldX += Math.cos(newAngle) * speed
     internalOldY += Math.sin(newAngle) * speed
@@ -67,168 +91,176 @@ export const makeVerletParticle = ({
       internalY += internalGravity
     }
   }
+
+  const collideWithWorld = ({
+    worldLeft,
+    worldRight,
+    worldTop,
+    worldBottom
+  }) => {
+
+    const vx = internalX - internalOldX
+    const vy = internalY - internalOldY
+
+    if (internalY + internalRadius > worldBottom) {
+      internalY = worldBottom - radius
+      // internalStoredAccelerationY += (vy * internalBounce)
+    } else if (internalY - radius < worldTop) {
+      internalY = worldTop + radius
+      // internalStoredAccelerationY += (vy * internalBounce)
+    }
+
+    if (internalX + internalRadius > worldRight) {
+      internalX = worldRight - radius
+      // internalStoredAccelerationX += (vx * internalBounce)
+    } else if (internalX - internalRadius < worldLeft) {
+      internalX = worldLeft + radius
+      // internalStoredAccelerationX += (vx * internalBounce)
+    }
+  }
+
+  const collide = () => {
+
+  }
+
+  const update2 = ({
+    delta,
+    worldLeft,
+    worldRight,
+    worldTop,
+    worldBottom
+  }) => {
+    // considerGravity()
+    accelerate(delta)
+    // collide()
+    // collideWithWorld({
+    //   worldLeft,
+    //   worldRight,
+    //   worldTop,
+    //   worldBottom
+    // })
+    inertia(delta)
+  }
+
   const api = {
     update,
+    update2,
     collideWith,
-    get velocityVector () {
+    get velocityVector() {
       return getVelocityVector()
     },
-    set velocityVector (vector) {
+    set velocityVector(vector) {
       setVelocityVector(vector)
     },
-    get id () {
+    get id() {
       return internalID
     },
-    set id (newID) {
+    set id(newID) {
       internalID = newID
     },
-    get x () {
+    get x() {
       return internalX
     },
-    set x (newX) {
+    set x(newX) {
       internalX = newX
     },
-    get y () {
+    get y() {
       return internalY
     },
-    set y (newY) {
+    set y(newY) {
       internalY = newY
     },
-    get vx () {
+    get vx() {
       return internalX - internalOldX
     },
-    set vx (newVX) {
+    set vx(newVX) {
       internalOldX += newVX
     },
-    get vy () {
+    get vy() {
       return internalY - internalOldY
     },
-    set vy (newVY) {
+    set vy(newVY) {
       internalOldY += newVY
     },
-    get oldX () {
+    get oldX() {
       return internalOldX
     },
-    set oldX (newOldX) {
+    set oldX(newOldX) {
       internalOldX = newOldX
     },
-    get oldY () {
+    get oldY() {
       return internalOldY
     },
-    set oldY (newOldY) {
+    set oldY(newOldY) {
       internalOldY = newOldY
     },
-    get radius () {
+    get radius() {
       return internalRadius
     },
-    set radius (newRadius) {
+    set radius(newRadius) {
       internalRadius = newRadius
     },
-    get bounce () {
+    get bounce() {
       return internalBounce
     },
-    set bounce (newBounce) {
+    set bounce(newBounce) {
       internalBounce = newBounce
     },
-    get gravity () {
+    get gravity() {
       return internalGravity
     },
-    set gravity (newGravity) {
+    set gravity(newGravity) {
       internalGravity = newGravity
     },
-    get friction () {
+    get friction() {
       return internalFriction
     },
-    set friction (newFriction) {
+    set friction(newFriction) {
       internalFriction = newFriction
     },
-    get isPinned () {
+    get isPinned() {
       return internalIsPinned
     },
-    set isPinned (newIsPinned) {
+    set isPinned(newIsPinned) {
       internalIsPinned = newIsPinned
     },
-    get mass () {
+    get mass() {
       return internalMass
     },
-    set mass (newMass) {
+    set mass(newMass) {
       internalMass = newMass
     },
-    get direction () {
+    get direction() {
       return getDirection()
     },
-    set direction (angle) {
+    set direction(angle) {
       setDirection(angle)
     },
-    get speed () {
+    get speed() {
       return getSpeed()
     },
-    set speed (newSpeed) {
+    set speed(newSpeed) {
       setSpeed(newSpeed)
     },
     ...rest
   }
 
-  function getVelocityVector () {
+  function getVelocityVector() {
     const vector = makeVector({})
     vector.angle = getDirection()
     vector.length = getSpeed()
     return vector
   }
 
-  function setVelocityVector (vector) {
+  function setVelocityVector(vector) {
     setDirection(vector.angle)
     setSpeed(vector.length)
   }
 
-  function collideWith (otherParticle, context) {
+  function collideWith(otherParticle) {
     const spring = 0.3
     if (otherParticle.id !== internalID) { // don't collide with yourself.
-      const diffX = internalX - otherParticle.x
-      const diffY = internalY - otherParticle.y
-      const distanceOfCenters = Math.sqrt((diffX * diffX) + (diffY * diffY))
-      const touchingDistance = otherParticle.radius + internalRadius
 
-      const angle = Math.atan2(diffY, diffX)
-      const changeRequired = (touchingDistance - distanceOfCenters) / 2
-
-      const ammountToChangeX = Math.cos(angle) * changeRequired
-      const ammountToChangeY = Math.sin(angle) * changeRequired
-
-      const internalVX = (internalX - internalOldX)
-      const internalVY = (internalY - internalOldY)
-
-      const otherVX = (otherParticle.x - otherParticle.oldX)
-      const otherVY = (otherParticle.y - otherParticle.oldY)
-
-      const internalVelocity = makeVector({
-        x: internalVX,
-        y: internalVY
-      })
-
-      const otherVelocity = makeVector({
-        x: otherVX,
-        y: otherVY
-      })
-
-      const newVelocity = internalVelocity.add(otherVelocity)
-      // const otherReversed = otherVelocity.subtract(internalVelocity)
-
-      const internalNewVX = newVelocity.x / 2
-      const internalNewVY = newVelocity.y / 2
-
-      const otherNewVX = -newVelocity.x / 2
-      const otherNewVY = -newVelocity.y / 2
-
-      internalX += ammountToChangeX
-      internalY += ammountToChangeY
-      internalOldX = internalX + internalNewVX
-      internalOldY = internalY + internalNewVY
-
-      otherParticle.x -= ammountToChangeX
-      otherParticle.y -= ammountToChangeY
-      otherParticle.oldX = otherParticle.x + otherNewVX
-      otherParticle.oldY = otherParticle.y + otherNewVY
     }
   }
 
