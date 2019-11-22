@@ -1,84 +1,69 @@
-/* globals requestAnimationFrame */
+import { Engine, World, Bodies } from 'matter-js'
+import {
+  getContext,
+  setupRender,
+  startRender,
+  resizeCanvas
+} from './canvasEngineLibrary'
 
-import { render } from './render.js'
+const myPhysicsEngine = Engine.create()
 
-const isFrameByFrameMode = false
-
-const canvas = document.createElement('canvas')
-const context = canvas.getContext('2d')
-
+const { canvas } = getContext()
 document.body.appendChild(canvas)
+resizeCanvas()
+const { width, height } = canvas
 
-let isMouseDown = false
-const mousePosition = { x: 0, y: 0, oldX: 0, oldY: 0 }
+const ground = Bodies.rectangle(width / 2, height - 50, width, 100, { isStatic: true })
+const leftWall = Bodies.rectangle(0, height / 2, 10, height, { isStatic: true })
+const rightWall = Bodies.rectangle(width, height / 2, 10, height, { isStatic: true })
 
-canvas.addEventListener('mousedown', event => {
-  isMouseDown = true
-  if (isFrameByFrameMode) {
-    requestAnimationFrame(heartbeat)
-  }
-})
+const addToMyWorld = (...rest) => World.add(myPhysicsEngine.world, [...rest])
+addToMyWorld(ground, leftWall, rightWall)
+const circleCount = 800
 
-canvas.addEventListener('mouseup', event => {
-  isMouseDown = false
-})
+const circles = []
 
-canvas.addEventListener('mouseout', event => {
-  isMouseDown = false
-})
+const randomX = () => Math.random() * width
+const randomY = () => Math.random() * height
 
-canvas.addEventListener('mousemove', event => {
-  const { clientX, clientY } = event
-  mousePosition.oldX = mousePosition.x
-  mousePosition.oldY = mousePosition.y
-  mousePosition.x = clientX
-  mousePosition.y = clientY
-})
-
-const getDPR = () => window.devicePixelRatio || 1.0
-
-const internalClearCanvas = ({ context }) => {
-  const { canvas: { width, height } } = context
-  context.clearRect(0, 0, width, height)
+while (circles.length < circleCount) {
+  const aCircle = Bodies.circle(randomX(), randomY(), 10)
+  circles.push(aCircle)
+  addToMyWorld(aCircle)
 }
 
-const sizeCanvas = ({ context }) => {
-  const { canvas } = context
-  const dpr = getDPR()
-  const targetWidth = canvas.clientWidth * dpr
-  const targetHeight = canvas.clientHeight * dpr
-  let wasResized = false
-  if (canvas.height !== targetHeight || canvas.width !== targetWidth) {
-    canvas.height = targetHeight
-    canvas.width = targetWidth
-    wasResized = true
+const renderItem = ({ item, context }) => {
+  const { vertices } = item
+  const [firstVertex, ...allOtherVertexes] = vertices
+  context.moveTo(firstVertex.x, firstVertex.y)
+  for (const vertex of allOtherVertexes) {
+    context.lineTo(vertex.x, vertex.y)
   }
-  return wasResized
+  context.lineTo(firstVertex.x, firstVertex.y)
 }
 
-let lastTimestamp = 0
-
-const heartbeat = timestamp => {
-  const deltaTime = timestamp - lastTimestamp
-  if (isFrameByFrameMode === false) {
-    requestAnimationFrame(heartbeat)
+setupRender(({ context, clearCanvas, deltaTime }) => {
+  Engine.update(myPhysicsEngine)
+  // Engine.run(myPhysicsEngine)
+  clearCanvas()
+  const drawWireframe = ({ item }) => {
+    context.beginPath()
+    renderItem({
+      item,
+      context
+    })
+    context.stroke()
   }
-  const clearCanvas = () => internalClearCanvas({ context })
-  const resized = sizeCanvas({ context })
-  const mouse = {
-    isMouseDown,
-    position: mousePosition
-  }
-  render({
-    mouse,
-    clearCanvas,
-    timestamp,
-    resized,
-    context,
-    canvas,
-    deltaTime,
-  })
-  lastTimestamp = timestamp
-}
 
-requestAnimationFrame(heartbeat)
+  for (const circle of circles) {
+    context.beginPath()
+    context.arc(circle.position.x, circle.position.y, 10, 0, Math.PI * 2)
+    context.fill()
+  }
+
+  drawWireframe({ item: ground })
+  drawWireframe({ item: leftWall })
+  drawWireframe({ item: rightWall })
+})
+
+startRender()
