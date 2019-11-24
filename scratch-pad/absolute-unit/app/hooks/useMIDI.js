@@ -1,44 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
 export const useMIDI = () => {
-  const [inputs, setInputs] = useState([])
-  const [outputs, setOutputs] = useState([])
-  const [isExclusive, setIsExclusive] = useState(false)
 
-  const subscribers = new Set()
+  const midiAccessRef = useRef(null)
 
-  const onPortStateChange = callback => {
-    if (subscribers.has(callback) === false) {
-      subscribers.add(callback)
-    }
-  }
+  const [hasAccess, setHasAccess] = useState(false)
+  const [error, setError] = useState(false)
 
   const request = () => {
-    const handleStateChange = event => {
-      for (const subscriber of subscribers) {
-        subscriber(event)
-      }
-    }
+    setHasAccess(false)
+    setError(error)
+    midiAccessRef.current = null
     navigator.requestMIDIAccess().then(midiAccess => {
-      midiAccess.addEventListener('statechange', handleStateChange)
-      const { inputs, outputs, sysexEnabled } = midiAccess
-      setInputs(inputs.values())
-      setOutputs(outputs.values())
-      setIsExclusive(sysexEnabled)
+      setHasAccess(true)
+      setError(null)
+      midiAccessRef.current = midiAccess
+    }).catch(error => {
+      console.error('[useMIDI.js] MIDI Access Error', error)
+      midiAccessRef.current = null
+      setError(error)
     })
   }
 
-  useEffect(() => {
-    return () => {
-      subscribers.clear()
-    }
-  }, [])
-
   return {
-    inputs,
-    outputs,
-    isExclusive,
-    request,
-    onPortStateChange
+    error,
+    hasAccess,
+    accessRef: midiAccessRef,
+    request
   }
 }

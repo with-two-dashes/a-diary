@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "moment": "^2.24.0",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "regl": "^1.3.13"
   },
   "name": "a-diary",
   "version": "1.0.0",
@@ -34,6 +35,6 @@
     "au": "cd scratch-pad/absolute-unit && yarn start",
     "bubbles": "cd scratch-pad/bubbles && yarn start",
     "eon": "cd scratch-pad/eon && parcel index.html",
-    "frank": "cd scratch-pad/frank && node main.js"
+    "frank": "cd scratch-pad/frank && parcel index.html"
   }
 }

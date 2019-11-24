@@ -9,7 +9,7 @@ import { getDistance } from './utilities/getDistance.js'
 import { norm } from './utilities/norm.js'
 import { lerp } from './utilities/lerp.js'
 import { drawCircle } from './utilities/drawCircle.js'
-import { isatty } from 'tty'
+import { useMIDI } from './hooks/useMIDI.js'
 
 const physicsAccuracyLoopCount = 10
 
@@ -171,6 +171,7 @@ export const App = () => {
     context.stroke()
   }
 
+  //#region[rgba(25,255,255,.5)]
   const renderAxesOld = ({ context, axes }) => {
     let axisIndex = 0
     let left = 100
@@ -321,6 +322,7 @@ export const App = () => {
       context.stroke()
     }
   }
+  //#endregion
 
   const renderAxes = ({ context, axes }) => {
 
@@ -531,7 +533,73 @@ export const App = () => {
     }
   }
 
+  const renderMIDI = ({ accessRef, context }) => {
+
+    const renderInput = ({ input }) => {
+      const {
+        type, // "input"
+        id, // a friendly device id, should be the same as inputKey
+        name, // Seems to be the same as id?
+        manufacturer, // string about the maker.
+        version, // string. '0.0'
+        state, // "connected" || "disconnected"? (disconected uncomfirmed)
+        connection, // "closed" or  "open" (open uncomfirmed)
+      } = input
+      context.beginPath()
+      context.fillText(`
+      [${type}] ${state.toUpperCase()} -- ${name} (${manufacturer}) version: ${version}
+      `, 50, 100)
+      context.fill()
+    }
+
+    const renderOutput = ({ output, index }) => {
+      const {
+        type, // "output"
+        id, // a friendly device id, should be the same as inputKey
+        name, // Seems to be the same as id?
+        manufacturer, // string about the maker.
+        version, // string. '0.0'
+        state, // "connected" || "disconnected"? (disconected uncomfirmed)
+        connection, // "closed" or  "open" (open uncomfirmed)
+      } = output
+      context.beginPath()
+      context.fillText(`
+      [${type}] ${state.toUpperCase()} -- ${name} (${manufacturer}) version: ${version}
+      `, 50, 180 + 10 * index)
+      context.fill()
+    }
+
+    const renderInputs = inputs => {
+      let counter = 0
+      inputs.forEach((input, key) => {
+        const index = counter
+        renderInput({ input, key, inputs, index })
+        counter++
+      })
+    }
+
+    const renderOutputs = outputs => {
+      let counter = 0
+      outputs.forEach((output, key) => {
+        const index = counter
+        renderOutput({ output, key, outputs, index })
+        counter++
+      })
+    }
+
+    const midiAccessInstance = accessRef.current
+    if (midiAccessInstance) {
+      const { inputs, outputs } = midiAccessInstance
+      renderInputs(inputs)
+      renderOutputs(outputs)
+    }
+
+  } // end renderMIDI
+
+  const { request, hasAccess, accessRef } = useMIDI()
+
   const animate = ({ context, deltaTime, canvas, clearCanvas, resized, isFirstRender }) => {
+
     clearCanvas()
     updateVerletPoints()
     for (let i = 0; i < physicsAccuracyLoopCount; i++) {
@@ -561,7 +629,12 @@ export const App = () => {
     }
 
     renderGamepads({ context, gamepads })
+    renderMIDI({ accessRef, context })
   }// anumate state
+
+  const triggerMidiButtonClickHandler = () => {
+    request()
+  }
 
   const {
     onGamepadConnected,
@@ -585,7 +658,12 @@ export const App = () => {
       </div>
       <div className='rightColumn'>
         <div>Right Column</div>
+        <div>MIDI: {hasAccess ? 'ENABLED' : 'DISABLED'}</div>
+        <pre>{
+          JSON.stringify({ hasAccess }, null, '  ')
+        }</pre>
         <button onClick={triggerClickHandler}>Trigger</button>
+        <button onClick={triggerMidiButtonClickHandler}>MIDI</button>
       </div>
     </div >
   )
