@@ -533,9 +533,24 @@ export const App = () => {
     }
   }
 
-  const renderMIDI = ({ accessRef, context }) => {
+  const renderMIDI = ({ accessRef, inputStateRef, context }) => {
 
-    const renderInput = ({ input }) => {
+    const launchpadControllerRow = [
+      104, 105, 106, 107, 108, 109, 110, 111
+    ]
+
+    const launchpadDecimalLayout = [
+      [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      [16, 17, 18, 19, 20, 21, 22, 23, 24],
+      [32, 33, 34, 35, 36, 37, 38, 39, 40],
+      [48, 49, 50, 51, 52, 53, 54, 55, 56],
+      [64, 65, 66, 67, 68, 69, 70, 71, 72],
+      [80, 81, 82, 83, 84, 85, 86, 87, 88],
+      [96, 97, 98, 99, 100, 101, 102, 103, 104],
+      [112, 113, 114, 115, 116, 117, 118, 119, 120]
+    ]
+
+    const renderInput = ({ input, index }) => {
       const {
         type, // "input"
         id, // a friendly device id, should be the same as inputKey
@@ -548,8 +563,112 @@ export const App = () => {
       context.beginPath()
       context.fillText(`
       [${type}] ${state.toUpperCase()} -- ${name} (${manufacturer}) version: ${version}
-      `, 50, 100)
+      `, 50, 100 + 10 * index)
       context.fill()
+
+      context.beginPath()
+      context.fill()
+    }
+
+    const renderInputState = ({ state }) => {
+      const left = 700
+      const top = 300
+      let noteOffset = 20
+
+      const {
+        notes,
+        controllers
+      } = state
+
+      let controllerCounter = 0
+      for (const controllerID of launchpadControllerRow) {
+        const x = left + 10 * controllerCounter
+        const y = top + 10
+        if (controllers) {
+          const value = controllers[controllerID]
+          if (value > 0) {
+            context.beginPath()
+            context.fillStyle = 'black'
+            drawCircle({
+              x, y,
+              context,
+              radius: 4.9
+            })
+            context.fill()
+          }
+        }
+        context.beginPath()
+        context.lineWidth = 1
+        context.strokeStyle = 'rgba(0,0,0,.2)'
+        drawCircle({
+          x, y,
+          context,
+          radius: 4.9
+        })
+        context.stroke()
+        controllerCounter++
+      }
+
+      let rowCounter = 0
+      for (const row of launchpadDecimalLayout) {
+        let noteCounter = 0
+        for (const noteID of row) {
+          const x = left + 10 * noteCounter
+          const y = top + 10 * rowCounter + noteOffset
+
+          if (notes) {
+            const value = notes[noteID]
+            const strength = value / 127
+            if (value > 0) {
+              context.beginPath()
+              context.fillStyle = `rgba(0,0,0,${strength})`
+              drawCircle({
+                x, y,
+                context,
+                radius: 4.9
+              })
+              context.fill()
+            }
+          }
+
+          context.beginPath()
+          context.lineWidth = 1
+          context.strokeStyle = 'rgba(0,0,0,.2)'
+          drawCircle({
+            x, y,
+            context,
+            radius: 5
+          })
+          context.stroke()
+          noteCounter++
+        }
+        rowCounter++
+      }
+
+      // for (const noteItem of noteStateItems) {
+      //   const { note, velocity } = noteItem
+      //   const x = 10 * counter + 700
+      //   const y = 60 + (rowCounter * 10)
+      //   if (velocity > 0) {
+      //     context.beginPath()
+      //     context.fillStyle = `rgba(0,0,0,${velocity / 127})`
+      //     context.arc(x, y, 5, 0, Math.PI * 2, false)
+      //     context.fill()
+      //   } else {
+      //     context.beginPath()
+      //     context.strokeStyle = 'rgba(0,0,0,.4)'
+      //     context.lineWidth = 1
+      //     context.arc(x, y, 5, 0, Math.PI * 2, false)
+      //     context.stroke()
+      //   }
+      //   // context.fillText(note, x - 5, y + 10)
+      //   counter++
+
+      //   if (counter >= 9) {
+      //     counter = 0
+      //     rowCounter++
+      //   }
+      // }
     }
 
     const renderOutput = ({ output, index }) => {
@@ -571,20 +690,22 @@ export const App = () => {
 
     const renderInputs = inputs => {
       let counter = 0
-      inputs.forEach((input, key) => {
+      for (const key of inputs.keys()) {
+        const input = inputs.get(key)
         const index = counter
-        renderInput({ input, key, inputs, index })
+        renderInput({ input, inputs, index, key })
         counter++
-      })
+      }
     }
 
     const renderOutputs = outputs => {
       let counter = 0
-      outputs.forEach((output, key) => {
+      for (const key of outputs.keys()) {
+        const output = outputs.get(key)
         const index = counter
-        renderOutput({ output, key, outputs, index })
+        renderOutput({ output, outputs, index, key })
         counter++
-      })
+      }
     }
 
     const midiAccessInstance = accessRef.current
@@ -592,11 +713,12 @@ export const App = () => {
       const { inputs, outputs } = midiAccessInstance
       renderInputs(inputs)
       renderOutputs(outputs)
+      renderInputState({ state: inputStateRef.current })
     }
 
   } // end renderMIDI
 
-  const { request, hasAccess, accessRef } = useMIDI()
+  const { request, hasAccess, accessRef, inputState, inputStateRef } = useMIDI()
 
   const animate = ({ context, deltaTime, canvas, clearCanvas, resized, isFirstRender }) => {
 
@@ -629,7 +751,7 @@ export const App = () => {
     }
 
     renderGamepads({ context, gamepads })
-    renderMIDI({ accessRef, context })
+    renderMIDI({ accessRef, inputStateRef, context })
   }// anumate state
 
   const triggerMidiButtonClickHandler = () => {
@@ -660,7 +782,9 @@ export const App = () => {
         <div>Right Column</div>
         <div>MIDI: {hasAccess ? 'ENABLED' : 'DISABLED'}</div>
         <pre>{
-          JSON.stringify({ hasAccess }, null, '  ')
+          JSON.stringify({
+            hasAccess
+          }, null, '  ')
         }</pre>
         <button onClick={triggerClickHandler}>Trigger</button>
         <button onClick={triggerMidiButtonClickHandler}>MIDI</button>
