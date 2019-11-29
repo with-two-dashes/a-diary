@@ -35,6 +35,7 @@
     "au": "cd scratch-pad/absolute-unit && yarn start",
     "bubbles": "cd scratch-pad/bubbles && yarn start",
     "eon": "cd scratch-pad/eon && parcel index.html",
-    "frank": "cd scratch-pad/frank && parcel index.html"
+    "frank": "cd scratch-pad/frank && parcel index.html",
+    "din":"cd scratch-pad/din && parcel index.html"
   }
 }
