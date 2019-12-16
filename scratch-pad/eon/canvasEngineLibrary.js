@@ -1,5 +1,5 @@
 /* globals requestAnimationFrame */
-let isFrameByFrameMode = false
+const isFrameByFrameMode = false
 let shouldRender = true
 
 const canvas = document.createElement('canvas')
