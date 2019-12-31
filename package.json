@@ -1,11 +1,11 @@
 {
   "dependencies": {
+    "core-js": "^3.5.0",
+    "jest": "^24.9.0",
     "moment": "^2.24.0",
     "parcel-bundler": "^1.12.4",
-    "readline": "^1.3.0",
-    "regl": "^1.3.13",
-    "serialport": "^8.0.6",
-    "uuid": "^3.3.3"
+    "regenerator-runtime": "^0.13.3",
+    "regl": "^1.3.13"
   },
   "name": "a-diary",
   "version": "1.0.0",
@@ -39,6 +39,11 @@
     "bubbles": "cd scratch-pad/bubbles && yarn start",
     "eon": "cd scratch-pad/eon && parcel index.html",
     "frank": "cd scratch-pad/frank && parcel index.html",
-    "din": "cd scratch-pad/din && parcel index.html"
+    "din": "cd scratch-pad/din && parcel index.html",
+    "ex:genfn": "cd scratch-pad/examples/generatorFunctions && parcel index.html"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@babel/plugin-transform-regenerator": "^7.7.5"
   }
 }
