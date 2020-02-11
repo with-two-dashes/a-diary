@@ -17,30 +17,32 @@ const calculateNotes = () => {
   ]
   const output = []
   let octave = -1
-  // hz algo swiped from: https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
-  const hz = n => 440 * Math.pow(2, (n - 69) / 12)
-  const name = n => {
+  const compute = n => {
+    // hz algo swiped from: https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+    const hz = n => 440 * Math.pow(2, (n - 69) / 12)
     const index = n % letters.length
     const letter = letters[index]
+    const frequency = hz(n)
     if (!letter) {
       const flat = letters[index - 1]
       const sharp = letters[index + 1]
       return {
         isAccidental: true,
-        letter: `${flat}b / ${sharp}#`
+        letter: `${flat}b / ${sharp}#`,
+        frequency
       }
     } else {
       return {
         isAccidental: false,
-        letter: `${letter}`
+        letter: `${letter}`,
+        frequency
       }
     }
   }
   let lastLetter = null
-  // Did you know there are 128 keys on a MIDI Keyboard?
+  // Did you know there are 128 keys on a MIDI 1.0 Keyboard?
   for (let i = 0; i < 128; i++) {
-    const { letter, isAccidental } = name(i)
-    const frequency = hz(i)
+    const { letter, isAccidental, frequency } = compute(i)
     if (lastLetter === 'B') {
       octave++
     }
