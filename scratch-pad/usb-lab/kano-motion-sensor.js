@@ -1,8 +1,9 @@
 const SerialPort = require('serialport')
 const { createInterface } = require('readline')
 const uuid = require('uuid')
+const usbDetect = require('usb-detection')
 
-const makeProximityDetector = ({ path }) => {
+const makeMotionSensor = ({ path }) => {
   let internalProximity = 0
   let internalMode = null // we won't know till we recieve data
 
@@ -14,16 +15,17 @@ const makeProximityDetector = ({ path }) => {
   const baudRate = 115200
 
   const serialPort = new SerialPort(path, {
-    baudRate
+    baudRate,
+    autoOpen: false
   })
 
   const lineReader = createInterface({
     input: serialPort
   })
 
-  const sendDataToDevice = requestObject => new Promise((resolve, reject) => {
-    const { id: requestID } = requestObject
-    waitingRequests.set(requestID, { requestObject, requestID, resolve, reject })
+  const sendRequestToDevice = requestObject => new Promise((resolve, reject) => {
+    const { id } = requestObject
+    waitingRequests.set(id, { resolve, reject })
     const formattedPayload = JSON.stringify(requestObject) + '\r\n'
     const payload = Buffer.from(formattedPayload)
     serialPort.write(payload)
@@ -80,6 +82,7 @@ const makeProximityDetector = ({ path }) => {
         resolve()
       }
     })
+    serialPort.open()
   })
 
   const broadcastProximity = value => {
@@ -134,7 +137,7 @@ const makeProximityDetector = ({ path }) => {
       method,
       params
     }
-    return sendDataToDevice(payload)
+    return sendRequestToDevice(payload)
   }
 
   const setToProximityMode = () => {
@@ -149,7 +152,7 @@ const makeProximityDetector = ({ path }) => {
       method,
       params
     }
-    return sendDataToDevice(payload)
+    return sendRequestToDevice(payload)
   }
 
   const setPollingInterval = interval => {
@@ -172,7 +175,7 @@ const makeProximityDetector = ({ path }) => {
       method,
       params
     }
-    return sendDataToDevice(payload)
+    return sendRequestToDevice(payload)
   }
 
   return {
@@ -191,36 +194,37 @@ const makeProximityDetector = ({ path }) => {
   }
 }
 
-const getConnectedKanoMotionDetectors = () => SerialPort.list().then(ports => {
+const getConnectedKanoMotionDetectorKits = () => SerialPort.list().then(ports => {
   const kanoMotionDetectorVendorID = '2341'
   const kanoMotionDetectorProductID = '814e'
   const foundDevices = ports.filter(({ vendorId, productId }) => {
     const isExpectedVendorId = vendorId === kanoMotionDetectorVendorID
     const isExpectedProductId = productId === kanoMotionDetectorProductID
-    return isExpectedVendorId && isExpectedProductId
+    const isMotionDetector = isExpectedVendorId && isExpectedProductId
+    return isMotionDetector
   })
   return foundDevices
 })
 
-getConnectedKanoMotionDetectors().then(kanoDevices => {
+getConnectedKanoMotionDetectorKits().then(kanoDevices => {
   for (const device of kanoDevices) {
     const { path } = device
-    const proximityDetector = makeProximityDetector({ path })
-    proximityDetector.subscribeToProximityUpdates(proximity => {
+    const sensor = makeMotionSensor({ path })
+    sensor.subscribeToProximityUpdates(proximity => {
       console.log({ proximity })
     })
-    proximityDetector.subscribeToGestureUpdates(gesture => {
+    sensor.subscribeToGestureUpdates(gesture => {
       console.log({ gesture })
     })
-    proximityDetector.connect().then(() => {
+    sensor.connect().then(() => {
       console.log('Connected!')
       // proximityDetector.setToGestureMode().then(() => {
       //   console.log('Gesture Mode Set!')
       // })
-      proximityDetector.setPollingInterval(50).then(() => {
+      sensor.setPollingInterval(50).then(() => {
         console.log('Interval Set!')
       })
-      proximityDetector.setToProximityMode().then(() => {
+      sensor.setToProximityMode().then(() => {
         console.log('Proximity Mode Set!')
       })
     })
